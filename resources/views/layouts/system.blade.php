@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
+<link rel="icon" href="{{ asset('system/assets/icon/logo/Vector (3).svg') }}">
+@foreach(['global','layout','auth/components','avatar','toast','user-menu'] as $css)
+<link rel="stylesheet" href="{{ asset('system/assets/css/'.$css.'.css') }}">
+@endforeach
+@if(in_array($page, ['dashboard','projetos','tarefas','configuracao']))
+<link rel="stylesheet" href="{{ asset('system/assets/css/pages/'.$page.'.css') }}">
+@endif
+<link rel="stylesheet" href="{{ asset('system/assets/css/integration.css') }}">
+</head><body data-base-url="{{ url('/system') }}" data-usuario-id="{{ auth()->id() }}" data-features='@json($access["features"])' data-can-write="{{ ($canWrite ?? true) ? 'true' : 'false' }}">
+<div class="layout">
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <img src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil">
+    </div>
+
+    <nav class="sidebar-nav">
+        @if(auth()->user()->is_admin)
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ $page === 'admin' ? 'active' : '' }}">
+            <img src="{{ asset('system/assets/icon/dashboard.svg') }}" alt=""> Administração
+        </a>
+        @endif
+        <a href="{{ route('dashboard') }}" class="sidebar-link {{ $page === 'dashboard' ? 'active' : '' }}">
+            <img src="{{ url('/system') }}/assets/icon/dashboard.svg" alt=""> Dashboard
+        </a>
+        <a href="{{ route('projects.index') }}" class="sidebar-link {{ $page === 'projetos' || $page === 'tarefas' ? 'active' : '' }}">
+            <img src="{{ url('/system') }}/assets/icon/folder-search.svg" alt=""> Projetos
+        </a>
+        <a href="{{ route('profile.edit') }}" class="sidebar-link {{ $page === 'configuracao' ? 'active' : '' }}">
+            <img src="{{ url('/system') }}/assets/icon/configurações.svg" alt=""> Configuração
+        </a>
+    </nav>
+
+    <div class="sidebar-banner">
+        <div class="sidebar-banner-icon">
+            <img src="{{ url('/system') }}/assets/icon/logo/Vector%20(3).svg" alt="Escopo Fácil" width="32" height="32">
+        </div>
+        <p class="sidebar-banner-title">Acesse nosso site</p>
+        <p class="sidebar-banner-desc">Conheça planos, recursos e novidades do Escopo Fácil.</p>
+        <a href="{{ url('/') }}" target="_blank" rel="noopener noreferrer" class="sidebar-banner-btn">
+            Visitar site
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1);flex-shrink:0">
+                <path d="M19 12H5"/><path d="M12 19L5 12L12 5"/>
+            </svg>
+        </a>
+    </div>
+
+    <div class="sidebar-logout">
+        <div class="sidebar-plan {{ auth()->user()->is_admin ? 'sidebar-plan--admin' : '' }}" aria-label="Perfil ou plano atual">
+            @if(auth()->user()->is_admin)
+                <span class="sidebar-admin-label">Admin</span>
+            @else
+                <small>Seu plano</small><strong>{{ app(\App\Services\PlanAccess::class)->summary(auth()->user())['name'] ?? 'Free' }}</strong>
+            @endif
+        </div>
+        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="sidebar-link">
+            <img src="{{ url('/system') }}/assets/icon/logout.svg" alt=""> Sair
+        </button></form>
+    </div>
+</aside>
+<main class="main">
+@if($errors->any())<div class="system-alert" role="alert">{{ $errors->first() }}</div>@endif
+@if(session('status'))<div class="system-alert" role="status">Alterações salvas.</div>@endif
+@yield('content')</main></div>    
+    <div id="user-menu-dropdown" class="user-menu-dropdown" hidden>
+        <div class="user-menu-header">
+            <?= \App\Support\SystemAvatar::renderAvatar($usuario['avatar'] ?? '', $usuario['nome'] ?? '', 'user-menu-avatar') ?>
+            <div class="user-menu-info">
+                <span class="user-menu-nome"><?= htmlspecialchars($usuario['nome'] ?? '') ?></span>
+                <span class="user-menu-email"><?= htmlspecialchars($usuario['email'] ?? '') ?></span>
+            </div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <a href="{{ url('/system') }}/index.php?page=configuracao" class="user-menu-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Configurações
+        </a>
+        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="user-menu-item user-menu-item--danger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sair
+        </button></form>
+    </div>
+    
+
+
+@include('system.notifications-panel')
+<script src="{{ asset('system/assets/js/api.js') }}"></script>
+<script src="{{ asset('system/assets/js/notifications.js') }}"></script>
+@foreach(['toast','avatar','avatar-picker','user-menu'] as $js)
+<script src="{{ asset('system/assets/js/'.$js.'.js') }}"></script>
+@endforeach
+@if(in_array($page, ['projetos','configuracao']) || ($page === 'tarefas' && isset($projetoId)))
+<script src="{{ asset('system/assets/js/pages/'.$page.'.js') }}"></script>
+@endif
+@if($page === 'dashboard')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.js"></script>
+@endif
+<script src="{{ asset('system/assets/js/integration.js') }}"></script>
+</body></html>

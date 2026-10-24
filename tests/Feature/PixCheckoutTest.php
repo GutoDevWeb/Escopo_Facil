@@ -96,7 +96,7 @@ class PixCheckoutTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
         $this->postJson('/checkout/process', ['plan_id' => $this->plan->id, 'period' => 'forever'])->assertUnprocessable();
-        $team = Plan::create(['name' => 'Equipe', 'slug' => 'equipe', 'price_monthly' => 49.90]);
+        $team = Plan::create(['name' => 'Equipe', 'slug' => 'custom', 'price_monthly' => 49.90]);
         $this->postJson('/checkout/process', ['plan_id' => $team->id, 'period' => 'monthly'])->assertUnprocessable();
     }
 

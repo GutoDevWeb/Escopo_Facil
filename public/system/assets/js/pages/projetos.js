@@ -1,0 +1,412 @@
+document.addEventListener('DOMContentLoaded', function () {
+    // ===== Busca de projetos =====
+    var searchInput = document.getElementById('projetos-search-input');
+    var grid        = document.querySelector('.projetos-grid');
+
+    if (searchInput && grid) {
+        searchInput.addEventListener('input', function () {
+            var q = searchInput.value.trim().toLowerCase();
+            var cards = grid.querySelectorAll('.projeto-card');
+            var visible = 0;
+
+            cards.forEach(function (card) {
+                var match = !q || (card.dataset.search || '').includes(q);
+                card.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+
+            // Mensagem de vazio
+            var empty = grid.querySelector('.projetos-empty');
+            if (!q || visible > 0) {
+                if (empty) empty.remove();
+            } else if (!empty) {
+                var div = document.createElement('p');
+                div.className = 'projetos-empty';
+                div.textContent = 'Nenhum projeto encontrado para "' + searchInput.value.trim() + '".';
+                grid.appendChild(div);
+            }
+        });
+    }
+
+    // ===== Modal: Novo Projeto =====
+    const btnCriar = document.querySelector('.projetos-btn-criar');
+    const modal = document.getElementById('modal-novo-projeto');
+    const btnClose = document.getElementById('modal-close-btn');
+    const btnCancelar = document.getElementById('modal-cancelar-btn');
+    const form = document.getElementById('form-novo-projeto');
+
+    function abrirModal() {
+        modal.classList.add('active');
+    }
+
+    function fecharModal() {
+        modal.classList.remove('active');
+        form.reset();
+    }
+
+    btnCriar.addEventListener('click', abrirModal);
+    btnClose.addEventListener('click', fecharModal);
+    btnCancelar.addEventListener('click', fecharModal);
+
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            fecharModal();
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        // Submit nativo para o action PHP
+    });
+
+    // ===== Modal Lateral: Gerenciar Projeto =====
+    const modalGerenciar = document.getElementById('modal-gerenciar-projeto');
+    const btnGerenciarClose = document.getElementById('gerenciar-close-btn');
+    const btnGerenciarCancelar = document.getElementById('gerenciar-cancelar-btn');
+    const formGerenciar = document.getElementById('form-gerenciar-projeto');
+    const membrosGrid = document.getElementById('gerenciar-membros-grid');
+    const templateMembro = document.getElementById('template-membro-card');
+    const baseUrl = document.body.dataset.baseUrl || '';
+    var gerenciarProjetoIndex = null;
+
+    function renderMembrosGrid(projeto) {
+        membrosGrid.innerHTML = '';
+        if (!projeto.membros || projeto.membros.length === 0) return;
+
+        projeto.membros.forEach(function (membro, membroIndex) {
+            const clone = templateMembro.content.cloneNode(true);
+            const isAdmin = membro.role === 'admin';
+
+            const roleIcon = clone.querySelector('.membro-card-role-icon');
+            const roleImg = clone.querySelector('.membro-card-role-img');
+            roleIcon.classList.add(isAdmin ? 'membro-card-role-icon--admin' : 'membro-card-role-icon--membro');
+            roleImg.src = baseUrl + '/assets/icon/' + (isAdmin ? 'user-key.svg' : 'user-lock.svg');
+
+            clone.querySelector('.membro-card-cargo').textContent = membro.cargo;
+            applyAvatar(clone.querySelector('.membro-card-avatar'), membro.avatar, membro.nome);
+            clone.querySelector('.membro-card-nome').textContent = membro.nome;
+            clone.querySelector('.membro-card-email').textContent = membro.email;
+
+            const badge = clone.querySelector('.membro-card-badge');
+            badge.textContent = membro.role_label || (isAdmin ? 'Admin' : 'Membro');
+            badge.classList.add(isAdmin ? 'membro-card-badge--admin' : 'membro-card-badge--membro');
+
+            clone.querySelector('.membro-card-dropdown-promote').textContent =
+                isAdmin ? 'Rebaixar para Membro' : 'Promover para Admin';
+
+            membrosGrid.appendChild(clone);
+
+            // Wire actions after append (fragment loses references)
+            const card = membrosGrid.lastElementChild;
+            const menuBtn = card.querySelector('.membro-card-menu');
+            if (membro.id === projeto.owner_id) menuBtn.hidden = true;
+            card.querySelector('.membro-card-dropdown-promote').hidden = !projeto.can_roles;
+            const dropdown = card.querySelector('.membro-card-dropdown');
+
+            menuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                document.querySelectorAll('.membro-card-dropdown.open').forEach(function (d) {
+                    if (d !== dropdown) d.classList.remove('open');
+                });
+                dropdown.classList.toggle('open');
+            });
+
+            card.querySelector('.membro-card-dropdown-promote').addEventListener('click', function () {
+                var novoRole = isAdmin ? 'membro' : 'admin';
+                var projetoId = document.getElementById('gerenciar-projeto-id').value;
+                var formData = new FormData();
+                formData.append('projeto_id', projetoId);
+                formData.append('membro_id', membro.id);
+                formData.append('role', novoRole);
+
+                systemFetch(baseUrl + '/actions/membros/alterar-role.php', {
+                    method: 'POST',
+                    body: formData
+                }).then(function () {
+                    membro.role = novoRole;
+                    membro.role_label = novoRole === 'admin' ? 'Gestor' : 'Membro';
+                    dropdown.classList.remove('open');
+                    renderMembrosGrid(projeto);
+                }).catch(function () {});
+            });
+
+            card.querySelector('.membro-card-dropdown-remove').addEventListener('click', function () {
+                var projetoId = document.getElementById('gerenciar-projeto-id').value;
+                var formData = new FormData();
+                formData.append('projeto_id', projetoId);
+                formData.append('membro_id', membro.id);
+
+                systemFetch(baseUrl + '/actions/membros/remover.php', {
+                    method: 'POST',
+                    body: formData
+                }).then(function () {
+                    projeto.membros.splice(membroIndex, 1);
+                    dropdown.classList.remove('open');
+                    renderMembrosGrid(projeto);
+                }).catch(function () {});
+            });
+        });
+    }
+
+    function abrirGerenciar(index) {
+        const projeto = window.projetosMock[index];
+        if (!projeto) return;
+
+        document.getElementById('gerenciar-projeto-id').value = projeto.id || '';
+        document.getElementById('gerenciar-titulo').value = projeto.titulo;
+        document.getElementById('gerenciar-descricao').value = projeto.descricao;
+        document.getElementById('gerenciar-criado-por').value = projeto.criado_por;
+        document.getElementById('gerenciar-data-criacao').value = projeto.data_criacao;
+
+        gerenciarProjetoIndex = index;
+        renderMembrosGrid(projeto);
+        modalGerenciar.classList.add('active');
+    }
+
+    function fecharGerenciar() {
+        modalGerenciar.classList.remove('active');
+        adicionarInline.style.display = 'none';
+        inputEmailMembro.value = '';
+        erroAdicionar.textContent = '';
+    }
+
+    // Delegate click nos botões "Gerenciar"
+    document.querySelectorAll('.projeto-btn-gerenciar').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-index'), 10);
+            abrirGerenciar(index);
+        });
+    });
+
+    btnGerenciarClose.addEventListener('click', fecharGerenciar);
+    btnGerenciarCancelar.addEventListener('click', fecharGerenciar);
+
+    modalGerenciar.addEventListener('click', function (e) {
+        if (e.target === modalGerenciar) {
+            fecharGerenciar();
+        }
+    });
+
+    formGerenciar.addEventListener('submit', function (e) {
+        // Submit nativo para o action PHP
+    });
+
+    // ===== Adicionar Membro (inline no modal gerenciar) =====
+    const btnToggleAdicionar   = document.getElementById('btn-toggle-adicionar-membro');
+    const adicionarInline      = document.getElementById('adicionar-membro-inline');
+    const inputBusca           = document.getElementById('adicionar-membro-busca');
+    const inputEmailMembro     = document.getElementById('adicionar-membro-email');
+    const listaSugestoes       = document.getElementById('adicionar-membro-sugestoes');
+    const btnConfirmarAdicionar = document.getElementById('btn-confirmar-adicionar-membro');
+    const erroAdicionar        = document.getElementById('adicionar-membro-erro');
+
+    var buscaTimer = null;
+
+    btnToggleAdicionar.addEventListener('click', function () {
+        const visivel = adicionarInline.style.display !== 'none';
+        adicionarInline.style.display = visivel ? 'none' : 'flex';
+        if (!visivel) {
+            inputBusca.value = '';
+            inputEmailMembro.value = '';
+            btnConfirmarAdicionar.disabled = true;
+            listaSugestoes.hidden = true;
+            inputBusca.focus();
+        }
+    });
+
+    function renderSugestoes(usuarios) {
+        listaSugestoes.innerHTML = '';
+        if (!usuarios.length) {
+            listaSugestoes.hidden = true;
+            return;
+        }
+        usuarios.forEach(function (u) {
+            const li = document.createElement('li');
+            li.className = 'adicionar-membro-sugestao';
+            li.innerHTML =
+                '<div class="sugestao-avatar"></div>' +
+                '<div class="sugestao-info">' +
+                    '<span class="sugestao-nome">' + escapeSystemHtml(u.nome) + '</span>' +
+                    '<span class="sugestao-email">' + escapeSystemHtml(u.email) + '</span>' +
+                '</div>';
+
+            applyAvatar(li.querySelector('.sugestao-avatar'), u.avatar || '', u.nome);
+
+            li.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                inputBusca.value = u.nome + ' (' + u.email + ')';
+                inputEmailMembro.value = u.email;
+                btnConfirmarAdicionar.disabled = false;
+                listaSugestoes.hidden = true;
+                erroAdicionar.textContent = '';
+            });
+            listaSugestoes.appendChild(li);
+        });
+        listaSugestoes.hidden = false;
+    }
+
+    inputBusca.addEventListener('input', function () {
+        const q = inputBusca.value.trim();
+        inputEmailMembro.value = '';
+        btnConfirmarAdicionar.disabled = true;
+        clearTimeout(buscaTimer);
+
+        if (q.length < 2) {
+            listaSugestoes.hidden = true;
+            return;
+        }
+
+        const projetoId = document.getElementById('gerenciar-projeto-id').value;
+        buscaTimer = setTimeout(function () {
+            systemFetch(baseUrl + '/actions/membros/buscar.php?q=' + encodeURIComponent(q) + '&projeto_id=' + projetoId)
+                .then(function (r) { return r.json(); })
+                .then(renderSugestoes)
+                .catch(function () { listaSugestoes.hidden = true; });
+        }, 250);
+    });
+
+    inputBusca.addEventListener('blur', function () {
+        setTimeout(function () { listaSugestoes.hidden = true; }, 150);
+    });
+
+    btnConfirmarAdicionar.addEventListener('click', function () {
+        const email = inputEmailMembro.value.trim();
+        const projetoId = document.getElementById('gerenciar-projeto-id').value;
+        erroAdicionar.textContent = '';
+
+        if (!email) {
+            erroAdicionar.textContent = 'Selecione um usuário da lista.';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('projeto_id', projetoId);
+        formData.append('email', email);
+
+        const msgs = {
+            'usuario-nao-encontrado': 'Nenhum usuário encontrado com esse email.',
+            'ja-membro':              'Esse usuário já é membro do projeto.',
+            'nao-autorizado':         'Sem permissão para adicionar membros.',
+            'email-vazio':            'Selecione um usuário da lista.',
+            'dados-invalidos':        'Dados inválidos.',
+            'nao-autenticado':        'Sessão expirada. Faça login novamente.',
+        };
+
+        systemFetch(baseUrl + '/actions/membros/adicionar.php', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.ok) {
+                sessionStorage.setItem('reabrir_gerenciar', gerenciarProjetoIndex);
+                window.location.reload();
+            } else {
+                erroAdicionar.textContent = msgs[data.erro] || 'Erro ao adicionar membro.';
+            }
+        })
+        .catch(function () {
+            erroAdicionar.textContent = 'Erro de conexão. Tente novamente.';
+        });
+    });
+
+    // ===== Modal Lateral: Visualizar Projeto (Membro) =====
+    const modalVisualizar = document.getElementById('modal-visualizar-projeto');
+    const btnVisualizarClose = document.getElementById('visualizar-close-btn');
+    const btnVisualizarFechar = document.getElementById('visualizar-fechar-btn');
+    const btnVisualizarSair = document.getElementById('visualizar-sair-btn');
+    const membrosGridVisualizar = document.getElementById('visualizar-membros-grid');
+    const templateMembroVisualizar = document.getElementById('template-membro-card-visualizar');
+
+    var visualizarProjetoId = null;
+
+    function abrirVisualizar(index) {
+        const projeto = window.projetosMock[index];
+        if (!projeto) return;
+
+        visualizarProjetoId = projeto.id;
+        document.getElementById('visualizar-titulo').value = projeto.titulo;
+        document.getElementById('visualizar-descricao').value = projeto.descricao;
+        document.getElementById('visualizar-criado-por').value = projeto.criado_por;
+        document.getElementById('visualizar-data-criacao').value = projeto.data_criacao;
+
+        membrosGridVisualizar.innerHTML = '';
+        if (projeto.membros && projeto.membros.length > 0) {
+            projeto.membros.forEach(function (membro) {
+                const clone = templateMembroVisualizar.content.cloneNode(true);
+                const isAdmin = membro.role === 'admin';
+                const baseUrl = document.body.dataset.baseUrl || '';
+
+                const roleIcon = clone.querySelector('.membro-card-role-icon');
+                const roleImg = clone.querySelector('.membro-card-role-img');
+                roleIcon.classList.add(isAdmin ? 'membro-card-role-icon--admin' : 'membro-card-role-icon--membro');
+                roleImg.src = baseUrl + '/assets/icon/' + (isAdmin ? 'user-key.svg' : 'user-lock.svg');
+
+                clone.querySelector('.membro-card-cargo').textContent = membro.cargo;
+                applyAvatar(clone.querySelector('.membro-card-avatar'), membro.avatar, membro.nome);
+                clone.querySelector('.membro-card-nome').textContent = membro.nome;
+                clone.querySelector('.membro-card-email').textContent = membro.email;
+
+                const badge = clone.querySelector('.membro-card-badge');
+                badge.textContent = membro.role_label || (isAdmin ? 'Admin' : 'Membro');
+                badge.classList.add(isAdmin ? 'membro-card-badge--admin' : 'membro-card-badge--membro');
+
+                membrosGridVisualizar.appendChild(clone);
+            });
+        } else {
+            membrosGridVisualizar.innerHTML = '<p class="modal-sem-membros">Nenhum membro visível.</p>';
+        }
+
+        modalVisualizar.classList.add('active');
+    }
+
+    function fecharVisualizar() {
+        modalVisualizar.classList.remove('active');
+    }
+
+    document.querySelectorAll('.projeto-btn-detalhes').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-index'), 10);
+            abrirVisualizar(index);
+        });
+    });
+
+    btnVisualizarClose.addEventListener('click', fecharVisualizar);
+    btnVisualizarFechar.addEventListener('click', fecharVisualizar);
+
+    btnVisualizarSair.addEventListener('click', function () {
+        if (!visualizarProjetoId) return;
+        if (!confirm('Tem certeza que deseja sair do projeto?')) return;
+
+        var formData = new FormData();
+        formData.append('projeto_id', visualizarProjetoId);
+        formData.append('membro_id', document.body.dataset.usuarioId);
+
+        systemFetch(baseUrl + '/actions/membros/remover.php', {
+            method: 'POST',
+            body: formData
+        }).then(function () {
+            window.location.reload();
+        });
+    });
+
+    modalVisualizar.addEventListener('click', function (e) {
+        if (e.target === modalVisualizar) {
+            fecharVisualizar();
+        }
+    });
+
+    // Fechar qualquer dropdown de membro ao clicar fora
+    document.addEventListener('click', function () {
+        document.querySelectorAll('.membro-card-dropdown.open').forEach(function (d) {
+            d.classList.remove('open');
+        });
+    });
+
+    // Reabrir modal gerenciar após reload (ex: adicionar membro)
+    var reabrirIndex = sessionStorage.getItem('reabrir_gerenciar');
+    if (reabrirIndex !== null) {
+        sessionStorage.removeItem('reabrir_gerenciar');
+        abrirGerenciar(parseInt(reabrirIndex, 10));
+    }
+});

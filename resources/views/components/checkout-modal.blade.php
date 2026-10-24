@@ -1,8 +1,8 @@
-@props(['initialPeriod' => 'yearly', 'initialOpen' => false])
+@props(['initialPeriod' => 'yearly', 'initialOpen' => false, 'initialPlan' => 'pro'])
 @php
     $checkoutPeriod = in_array($initialPeriod, ['monthly', 'yearly'], true) ? $initialPeriod : 'yearly';
 @endphp
-<dialog id="checkout-modal" class="login-modal checkout-modal" aria-labelledby="payment-title" data-initial-period="{{ $checkoutPeriod }}" data-initial-open="{{ $initialOpen ? 'true' : 'false' }}">
+<dialog id="checkout-modal" class="login-modal checkout-modal" aria-labelledby="payment-title" data-initial-period="{{ $checkoutPeriod }}" data-initial-plan="{{ $initialPlan }}" data-initial-open="{{ $initialOpen ? 'true' : 'false' }}">
     <button class="login-modal-close" type="button" data-close-checkout aria-label="Fechar pagamento">&times;</button>
     <div class="modal-scroll" data-modal-scroll>
     <div id="checkout" class="login-modal-content" data-endpoint="{{ route('subscription.process') }}" data-options-url="{{ route('subscription.options') }}" data-status-base="{{ url('/payments') }}" data-home="{{ url('/') }}" data-period="{{ $checkoutPeriod }}">
@@ -12,7 +12,7 @@
 
         <aside class="checkout-order" aria-label="Resumo do plano">
             <div class="checkout-order-top">
-                <span class="checkout-plan-name">Escopo <strong>Pro</strong></span>
+                <span class="checkout-plan-name" data-checkout-plan-name>Escopo <strong>{{ $initialPlan === 'equipe' ? 'Equipe' : 'Pro' }}</strong></span>
                 <div class="checkout-periods" role="group" aria-label="Período do plano">
                     <button type="button" data-checkout-period="monthly" aria-pressed="{{ $checkoutPeriod === 'monthly' ? 'true' : 'false' }}">Mensal</button>
                     <button type="button" data-checkout-period="yearly" aria-pressed="{{ $checkoutPeriod === 'yearly' ? 'true' : 'false' }}">Anual</button>

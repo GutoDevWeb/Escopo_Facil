@@ -8,6 +8,7 @@ if (dialog && root) {
     const periods = [...root.querySelectorAll('[data-checkout-period]')];
     const format = cents => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100);
     let period = dialog.dataset.initialPeriod;
+    let planSlug = dialog.dataset.initialPlan || 'pro';
     let options;
     let payment;
     let polling;
@@ -23,7 +24,7 @@ if (dialog && root) {
     const intentKey = 'escopo-checkout-intent';
 
     function saveIntent() {
-        try { sessionStorage.setItem(intentKey, JSON.stringify({ period, returnURL })); } catch { /* Optional. */ }
+        try { sessionStorage.setItem(intentKey, JSON.stringify({ period, planSlug, returnURL })); } catch { /* Optional. */ }
     }
     function clearIntent() {
         try { sessionStorage.removeItem(intentKey); } catch { /* Optional. */ }
@@ -34,7 +35,8 @@ if (dialog && root) {
             if (!intent || !['monthly', 'yearly'].includes(intent.period)) return null;
             const url = new URL(intent.returnURL, location.href);
             if (url.origin !== location.origin) return null;
-            return { period: intent.period, returnURL: url.href };
+            if (intent.planSlug && !['pro', 'equipe'].includes(intent.planSlug)) return null;
+            return { period: intent.period, planSlug: intent.planSlug || 'pro', returnURL: url.href };
         } catch { return null; }
     }
 
@@ -61,6 +63,10 @@ if (dialog && root) {
         });
         root.dataset.period = period;
         if (options) {
+            root.querySelector('[data-checkout-plan-name]').textContent = options.plan.name;
+            get('payment-title').textContent = options.plan.slug === 'equipe' ? 'Seu próximo passo é Equipe' : 'Seu próximo passo é Pro';
+            get('paid-title').textContent = options.plan.slug === 'equipe' ? 'Seu Equipe está liberado!' : 'Seu Pro está liberado!';
+            get('payment-pending').querySelector('.checkout-description').textContent = `Conclua a simulação para começar a usar seu ${options.plan.name}.`;
             root.dataset.plan = options.plan.id;
             root.querySelector('[data-checkout-total]').textContent = format(payment?.amount ?? options.plan[period]);
             const email = root.querySelector('[data-checkout-email]');
@@ -138,7 +144,8 @@ if (dialog && root) {
             else showFailure(error);
         }
     }
-    async function open(selected = 'yearly', historyMode = 'push') {
+    async function open(selected = 'yearly', historyMode = 'push', selectedPlan = planSlug) {
+        planSlug = ['pro', 'equipe'].includes(selectedPlan) ? selectedPlan : 'pro';
         selected = ['monthly', 'yearly'].includes(selected) ? selected : 'yearly';
         if (!dialog.open) opener = document.activeElement;
         if (historyMode === 'push' && !dialog.open && !location.pathname.startsWith('/assinar/') && !location.pathname.startsWith('/checkout/')) returnURL = location.href;
@@ -157,12 +164,14 @@ if (dialog && root) {
         screen('loading', false);
         dialog.querySelector('[data-modal-scroll]').scrollTop = 0;
         updateSummary();
-        const url = new URL('assinar/pro', root.dataset.home.endsWith('/') ? root.dataset.home : root.dataset.home + '/');
+        const url = new URL(`assinar/${planSlug}`, root.dataset.home.endsWith('/') ? root.dataset.home : root.dataset.home + '/');
         url.searchParams.set('period', period);
-        if (historyMode === 'push') history.pushState({ checkout: true, period }, '', url);
-        else if (historyMode === 'replace') history.replaceState({ checkout: true, period }, '', url);
+        if (historyMode === 'push') history.pushState({ checkout: true, period, planSlug }, '', url);
+        else if (historyMode === 'replace') history.replaceState({ checkout: true, period, planSlug }, '', url);
         try {
-            const data = await request(root.dataset.optionsUrl);
+            const optionsURL = new URL(root.dataset.optionsUrl);
+            optionsURL.pathname = optionsURL.pathname.replace(/\/[^/]+$/, `/${planSlug}`);
+            const data = await request(optionsURL.href);
             if (generation !== cycle || !dialog.open) return;
             options = data;
             syncSession(data);
@@ -252,7 +261,8 @@ if (dialog && root) {
         const link = event.target.closest('a[data-checkout-link]');
         if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === '_blank') return;
         event.preventDefault();
-        open(new URL(link.href).searchParams.get('period'));
+        const url = new URL(link.href);
+        open(url.searchParams.get('period'), 'push', url.pathname.split('/').pop());
     });
     root.querySelectorAll('[data-checkout-period]').forEach(button => button.addEventListener('click', () => {
         if (!busy && period !== button.dataset.checkoutPeriod) open(button.dataset.checkoutPeriod, 'replace');
@@ -275,7 +285,7 @@ if (dialog && root) {
         suspending = false;
     });
     window.addEventListener('popstate', event => {
-        if (event.state?.checkout) open(event.state.period, 'none');
+        if (event.state?.checkout) open(event.state.period, 'none', event.state.planSlug || 'pro');
         else if (dialog.open) { historyClosing = true; dialog.close(); }
     });
     get('generate-pix').addEventListener('click', event => generate(event.currentTarget));
@@ -300,6 +310,7 @@ if (dialog && root) {
             open(period, 'replace');
         } else if (intent) {
             period = intent.period;
+            planSlug = intent.planSlug;
             returnURL = intent.returnURL;
             awaitingAuth = true;
             if (auth.dataset.authenticated === 'true' && auth.dataset.verified === 'true') {

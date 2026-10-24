@@ -9,6 +9,11 @@ class Plan extends Model
 {
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return ['limits' => 'array', 'price_monthly' => 'decimal:2', 'price_yearly' => 'decimal:2'];
+    }
+
     protected $fillable = [
         'name',
         'slug',

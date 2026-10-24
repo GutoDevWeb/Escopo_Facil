@@ -266,3 +266,13 @@ html.system-entry-open .support-whatsapp{visibility:hidden}
 @media(max-width:600px){.support-whatsapp{right:max(16px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));width:54px;height:54px}.support-whatsapp-tooltip{white-space:normal;width:190px}}
 @media(max-width:1000px){.contact-support{gap:40px}.contact-support-copy h3{font-size:34px}}
 @media(max-width:809px){.contact-support{grid-template-columns:1fr;gap:40px;margin-top:88px;max-width:600px}.contact-support-copy h3{font-size:34px}.contact-support-copy>p:not(.support-eyebrow){font-size:16px;line-height:25px}.contact-support-photo{border-radius:44px 16px 16px 16px}.support-curve{left:-12px;bottom:-16px;width:72px;height:72px;border-width:18px}}
+.price .price-period{font-size:14px;font-weight:400;letter-spacing:normal;color:#625b57;white-space:nowrap}
+.motion-reveal{opacity:0;transform:translate3d(0,24px,0);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+.motion-reveal.is-visible,.motion-reveal:focus-within{opacity:1;transform:translate3d(0,0,0)}
+.footer-socials{display:flex;align-items:center;gap:12px;margin:24px 0 0;color:var(--wine)}
+.footer-socials span{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid #8b083622;border-radius:50%;background:#ffffff4d}
+.footer-socials svg{width:19px;height:19px;fill:currentColor}
+.hero>.cloud,.pricing>.cloud{opacity:1;filter:contrast(1.1) drop-shadow(0 4px 8px #71809424)}
+.hero>.cloud.left,.pricing>.cloud.left{background-image:url('cloud-left.png'),url('cloud-left.png')}
+.hero>.cloud.right,.pricing>.cloud.right{background-image:url('cloud-right.png'),url('cloud-right.png')}
+@media(prefers-reduced-motion:reduce){html:not([data-motion=full]){scroll-behavior:auto!important}html:not([data-motion=full]) .motion-reveal{opacity:1!important;transform:none!important;transition:none!important}html:not([data-motion=full]) .workspace,html:not([data-motion=full]) .mobile-scene .device-images,html:not([data-motion=full]) .cloud{transform:none!important}html:not([data-motion=full]) *,html:not([data-motion=full]) *:before,html:not([data-motion=full]) *:after{animation:none!important;transition:none!important}}

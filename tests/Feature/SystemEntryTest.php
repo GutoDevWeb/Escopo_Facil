@@ -11,6 +11,8 @@ class SystemEntryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void { parent::setUp(); $this->seed(\Database\Seeders\PlanSeeder::class); }
+
     public function test_dashboard_requires_an_authenticated_account(): void
     {
         $this->get(route('dashboard'))->assertRedirect(route('login'));
@@ -53,7 +55,7 @@ class SystemEntryTest extends TestCase
 
     public function test_login_preserves_the_checkout_and_billing_period_requested_as_a_guest(): void
     {
-        $plan = Plan::create([
+        $plan = Plan::firstOrCreate(['slug' => 'pro'], [
             'name' => 'Escopo Pro',
             'slug' => 'pro',
             'price_monthly' => 27.90,

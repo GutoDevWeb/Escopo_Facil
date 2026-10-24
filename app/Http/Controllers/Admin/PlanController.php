@@ -36,9 +36,12 @@ class PlanController extends Controller
             'description' => 'nullable|string',
             'price_monthly' => 'required|numeric|min:0',
             'price_yearly' => 'required|numeric|min:0',
+            'limits' => 'sometimes|array:projects,members',
+            'limits.projects' => 'sometimes|integer|min:-1',
+            'limits.members' => 'sometimes|integer|min:-1',
         ]);
 
-        Plan::create($request->only(['name', 'slug', 'description', 'price_monthly', 'price_yearly']));
+        Plan::create($request->only(['name', 'slug', 'description', 'price_monthly', 'price_yearly', 'limits']));
 
         return redirect()->route('admin.plans.index')->with('success', 'Plano criado com sucesso!');
     }
@@ -62,9 +65,15 @@ class PlanController extends Controller
             'description' => 'nullable|string',
             'price_monthly' => 'required|numeric|min:0',
             'price_yearly' => 'required|numeric|min:0',
+            'limits' => 'sometimes|array:projects,members',
+            'limits.projects' => 'sometimes|integer|min:-1',
+            'limits.members' => 'sometimes|integer|min:-1',
         ]);
 
-        $plan->update($request->only(['name', 'slug', 'description', 'price_monthly', 'price_yearly']));
+        if ($request->slug !== $plan->slug && (\App\Models\User::where('plan_id', $plan->id)->exists() || \App\Models\Subscription::where('plan_id', $plan->id)->exists())) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['slug' => 'Não altere o identificador de um plano já utilizado.']);
+        }
+        $plan->update($request->only(['name', 'slug', 'description', 'price_monthly', 'price_yearly', 'limits']));
 
         return redirect()->route('admin.plans.index')->with('success', 'Plano atualizado com sucesso!');
     }
@@ -74,6 +83,8 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        abort_if(\App\Models\User::where('plan_id', $plan->id)->exists() || \App\Models\Subscription::where('plan_id', $plan->id)->exists()
+            || \App\Models\PixPayment::where('plan_id', $plan->id)->exists(), 409, 'Plano em uso. Não é possível excluí-lo.');
         $plan->delete();
 
         return redirect()->route('admin.plans.index')->with('success', 'Plano removido com sucesso!');

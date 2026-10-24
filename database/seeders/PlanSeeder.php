@@ -18,7 +18,7 @@ class PlanSeeder extends Seeder
             'description' => 'Ideal para estudantes e testes individuais.',
             'price_monthly' => 0.00,
             'price_yearly' => 0.00,
-            'limits' => json_encode(['projects' => 3, 'members' => 1]),
+            'limits' => ['projects' => -1, 'members' => -1],
         ]);
 
         Plan::firstOrCreate(['slug' => 'pro'], [
@@ -27,7 +27,7 @@ class PlanSeeder extends Seeder
             'description' => 'Focado em prioridades, prazos e gestão avançada.',
             'price_monthly' => 27.90,
             'price_yearly' => 238.80,
-            'limits' => json_encode(['projects' => 15, 'members' => 5]),
+            'limits' => ['projects' => -1, 'members' => -1],
         ]);
 
         Plan::firstOrCreate(['slug' => 'equipe'], [
@@ -36,7 +36,7 @@ class PlanSeeder extends Seeder
             'description' => 'Permissões avançadas, suporte e histórico completo para times.',
             'price_monthly' => 49.90,
             'price_yearly' => 499.00,
-            'limits' => json_encode(['projects' => -1, 'members' => 25]),
+            'limits' => ['projects' => -1, 'members' => -1],
         ]);
     }
 }

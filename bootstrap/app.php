@@ -11,8 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [\App\Http\Middleware\TrackSystemActivity::class]);
         $middleware->alias([
             'subscription' => \App\Http\Middleware\CheckSubscription::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

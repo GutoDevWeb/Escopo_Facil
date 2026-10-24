@@ -42,7 +42,10 @@ class RegisteredUserController extends Controller
             'privacy_notice_version.in' => 'O Aviso de Privacidade foi atualizado. Atualize a página e consulte a nova versão antes de continuar.',
         ]);
 
-        $freePlan = Plan::where('price_monthly', 0)->where('price_yearly', 0)->first();
+        $freePlan = Plan::firstOrCreate(['slug' => 'free'], [
+            'name' => 'Plano Free', 'price_monthly' => 0, 'price_yearly' => 0,
+            'limits' => ['projects' => -1, 'members' => -1],
+        ]);
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],

@@ -1,56 +1,17 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Gestão de Planos') }}
-            </h2>
-            <a href="{{ route('admin.plans.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-semibold">
-                Novo Plano
-            </a>
-        </div>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-gray-700">
-                            <th class="py-3 px-4">Nome</th>
-                            <th class="py-3 px-4">Descrição</th>
-                            <th class="py-3 px-4">Preço</th>
-                            <th class="py-3 px-4 text-right">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($plans as $plan)
-                            <tr class="border-b border-gray-700 hover:bg-gray-700/50">
-                                <td class="py-3 px-4 font-medium">{{ $plan->name }}</td>
-                                <td class="py-3 px-4 text-gray-400">{{ $plan->description ?? 'Sem descrição' }}</td>
-                                <td class="py-3 px-4">R$ {{ number_format($plan->price, 2, ',', '.') }}</td>
-                                <td class="py-3 px-4 text-right space-x-2">
-                                    <a href="{{ route('admin.plans.edit', $plan->id) }}" class="text-yellow-400 hover:underline">Editar</a>
-                                    <form action="{{ route('admin.plans.destroy', $plan->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tens a certeza que pretendes apagar este plano?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-400 hover:underline">Apagar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="py-4 text-center text-gray-400">Nenhum plano encontrado.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+@extends('layouts.system', app(\App\Http\Controllers\SystemController::class)->common(request(), 'admin'))
+@section('content')
+<header class="page-header"><div><p class="admin-eyebrow">ADMINISTRAÇÃO</p><h1 class="headline">Configurar planos</h1><p class="admin-muted">Gerencie os valores e as configurações dos planos do Escopo Fácil.</p></div><a class="admin-button" href="{{ route('admin.plans.create') }}">Novo plano</a></header>
+@include('admin.navigation')
+@if(session('success'))<div class="system-alert" role="status">{{ session('success') }}</div>@endif
+<section class="admin-panel"><h2>Planos disponíveis</h2><p class="admin-muted">Valores mensais e anuais. As funcionalidades de Free, Pro e Equipe seguem as regras de acesso do sistema.</p>
+<div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>Plano</th><th>Mensal</th><th>Anual</th><th>Projetos</th><th>Membros</th><th>Ações</th></tr></thead><tbody>
+@forelse($plans as $plan)
+<tr><td><strong>{{ $plan->name }}</strong><small>{{ $plan->slug }}</small>@if($plan->description)<small>{{ $plan->description }}</small>@endif</td>
+    <td>R$ {{ number_format($plan->price_monthly, 2, ',', '.') }}</td><td>R$ {{ number_format($plan->price_yearly, 2, ',', '.') }}</td>
+    @foreach(['projects', 'members'] as $resource)<td>{{ ($plan->limits[$resource] ?? -1) < 0 ? 'Ilimitados' : $plan->limits[$resource] }}</td>@endforeach
+    <td><div class="admin-row-actions"><a class="admin-button admin-button--secondary" href="{{ route('admin.plans.edit', $plan) }}">Editar</a>
+    <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" onsubmit="return confirm('Deseja excluir este plano? Planos em uso não podem ser excluídos.');">@csrf @method('DELETE')<button type="submit" class="admin-button admin-button--danger-outline">Excluir</button></form></div></td>
+</tr>
+@empty<tr><td colspan="6">Nenhum plano cadastrado.</td></tr>@endforelse
+</tbody></table></div></section>
+@endsection

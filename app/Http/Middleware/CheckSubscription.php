@@ -12,11 +12,9 @@ class CheckSubscription
     {
         $user = $request->user();
 
-        // Verifica se o utilizador está autenticado e tem um plano associado
-        if (!$user || !$user->plan_id) {
-            return redirect()->route('admin.plans.index')
-                ->with('error', 'Precisas de um plano ativo para aceder a esta funcionalidade.');
-        }
+        if (! $user) return redirect()->route('login');
+        abort_unless(app(\App\Services\PlanAccess::class)->active($user), 403,
+            'Seu acesso ao sistema não está ativo. Consulte os planos ou entre em contato com o suporte.');
 
         return $next($request);
     }

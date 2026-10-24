@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { animate, motion, MotionConfig, useMotionValueEvent, useScroll, useSpring, useTransform } from 'motion/react';
+import { animate, motion, MotionConfig, useMotionValueEvent, useScroll, useSpring, useTransform, useReducedMotion } from 'motion/react';
+
+// The landing explicitly opts into its full animation experience.
+function useSiteReducedMotion() {
+    const prefersReduced = useReducedMotion();
+    return prefersReduced && document.documentElement.dataset.motion !== 'full';
+}
 
 // Parameters read from the published reference, rather than guessed durations.
 const dashboardSpring = { type: 'spring', stiffness: 400, damping: 100, mass: 1, restDelta: .0001 };
 const imageSpring = { type: 'spring', stiffness: 150, damping: 37, mass: 1, restDelta: .0001 };
-const entranceSpring = { type: 'spring', stiffness: 150, damping: 30, mass: 1 };
 const slideSpring = { type: 'spring', bounce: 0, duration: .6 };
 
 function ScrollClouds({ selector, offset }) {
+    const reduced = useSiteReducedMotion();
     const section = useRef(document.querySelector(selector));
     const { scrollYProgress } = useScroll({ target: section, offset });
     const position = useSpring(scrollYProgress, imageSpring);
@@ -16,7 +22,7 @@ function ScrollClouds({ selector, offset }) {
     function paint(value) {
         // Each cloud exits through its own edge and retraces its path on scroll up.
         // Percentages keep the travel proportional to its responsive image size.
-        const progress = Math.max(0, Math.min(1, value / .75));
+        const progress = reduced ? 0 : Math.max(0, Math.min(1, value / .75));
         section.current.querySelectorAll(':scope > .cloud').forEach(cloud => {
             const direction = cloud.classList.contains('left') ? -1 : 1;
             cloud.style.transform = `translate3d(${direction * progress * 110}%, ${-16 * progress}px, 0)`;
@@ -33,7 +39,7 @@ function ScrollClouds({ selector, offset }) {
 }
 
 function HeroWords({ lines, delay = 0 }) {
-    const reduced = false;
+    const reduced = useSiteReducedMotion();
     let index = 0;
     return lines.map((line, lineIndex) => <React.Fragment key={lineIndex}>
         {lineIndex > 0 && <br />}
@@ -41,68 +47,44 @@ function HeroWords({ lines, delay = 0 }) {
             const order = index++;
             return <React.Fragment key={wordIndex}>
                 {wordIndex > 0 && ' '}
-                <motion.span className="hero-word" initial={reduced ? false : { opacity: .001, y: 10, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 163, damping: 40, mass: 1, delay: delay + order * .05 }}>{word}</motion.span>
+                <motion.span className="hero-word" initial={reduced ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={reduced ? { duration: 0 } : { duration: .6, ease: [.22, 1, .36, 1], delay: delay + order * .035 }}>{word}</motion.span>
             </React.Fragment>;
         })}
     </React.Fragment>);
 }
 
-// Keep layout measurements independent of the transforms applied to each target.
-function ScrollSectionElement({ element }) {
-    const target = useRef(element);
-    const { scrollYProgress } = useScroll({ target, offset: ['start end', 'end end'] });
-    const progress = useSpring(scrollYProgress, imageSpring);
-    const paint = value => {
-        const p = Math.max(0, Math.min(1, value));
-        // The group settles before its bottom reaches the viewport bottom.
-        const reveal = Math.min(1, p / .45);
-        const focused = element.contains(document.activeElement);
-        element.style.opacity = focused ? '1' : String(Math.min(1, p / .3));
-        element.style.transform = `translate3d(0, ${focused ? 0 : 64 * (1 - reveal)}px, 0)`;
-    };
-    useMotionValueEvent(progress, 'change', paint);
-    useEffect(() => {
-        paint(progress.get());
-        const focus = () => paint(progress.get());
-        element.addEventListener('focusin', focus);
-        return () => {
-            element.removeEventListener('focusin', focus);
-            element.style.removeProperty('opacity');
-            element.style.removeProperty('transform');
-        };
-    }, []);
-    return null;
-}
-
+// A single observer and entrance pattern for all content blocks. Re-arm only
+// after a block leaves the viewport; scrolling within a visible block never fades it.
 function SectionReveals() {
-    const [groups] = useState(() => [...document.querySelectorAll('.feature-row, .resources-section > .eyebrow, .resources-section > h2, .resource-card, .resource-highlights > article, .contact-section > .eyebrow, .contact-section > h2, .contact-description, .contact-form, .contact-support-copy, .contact-support-visual')]);
-    const [illustrations] = useState(() => [...document.querySelectorAll('.feature-visual')]);
-    return <>
-        {groups.map((element, index) => <ScrollSectionElement key={`group-${index}`} element={element} />)}
-        {illustrations.map((element, index) => <ScrollIllustration key={`image-${index}`} element={element} />)}
-    </>;
-}
-
-function ScrollIllustration({ element }) {
-    // Track the frame; moving the image must not change the scroll target bounds.
-    const target = useRef(element);
-    const { scrollYProgress } = useScroll({ target, offset: ['start end', 'end end'] });
-    const progress = useSpring(scrollYProgress, imageSpring);
-    const image = element.querySelector('img');
-    const paint = value => {
-        const p = Math.max(0, Math.min(1, value));
-        image.style.transform = `translate3d(0, ${60 * (1 - p)}px, 0)`;
-    };
-    useMotionValueEvent(progress, 'change', paint);
+    const reduced = useSiteReducedMotion();
     useEffect(() => {
-        paint(progress.get());
-        return () => image.style.removeProperty('transform');
-    }, []);
+        const elements = [...document.querySelectorAll('.feature-row, .resources-section > .eyebrow, .resources-section > h2, .resource-card, .resource-highlights > article, .benefits > .eyebrow, .benefits > h2, .mobile-scene, .pricing > .eyebrow, .pricing > h2, .plans > .plan, .contact-section > .eyebrow, .contact-section > h2, .contact-description, .contact-form, .contact-support-copy, .contact-support-visual, .site-footer-inner')];
+        if (reduced) return;
+        const revealFocus = event => event.currentTarget.classList.add('is-visible');
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+            const element = entry.target;
+            if (entry.isIntersecting || element.contains(document.activeElement)) element.classList.add('is-visible');
+            else if (entry.boundingClientRect.bottom <= 0 || entry.boundingClientRect.top >= innerHeight) element.classList.remove('is-visible');
+        }), { threshold: 0, rootMargin: '0px 0px -24px 0px' });
+        elements.forEach(element => {
+            element.classList.add('motion-reveal');
+            if (element.getBoundingClientRect().top < innerHeight && element.getBoundingClientRect().bottom > 0) element.classList.add('is-visible');
+            observer.observe(element);
+            element.addEventListener('focusin', revealFocus);
+        });
+        return () => {
+            observer.disconnect();
+            elements.forEach(element => {
+                element.classList.remove('motion-reveal', 'is-visible');
+                element.removeEventListener('focusin', revealFocus);
+            });
+        };
+    }, [reduced]);
     return null;
 }
 
 function LandingMotion({ host, mobileImage, webImage }) {
-    const reduced = false;
+    const reduced = useSiteReducedMotion();
     const [device, setDevice] = useState('mobile');
     const [mobile, setMobile] = useState(window.innerWidth <= 760);
     const dashboardRef = useRef(document.querySelector('.dashboard-stage'));
@@ -136,7 +118,7 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const header = document.querySelector('header');
         header.classList.toggle('is-scrolled', window.scrollY > 24);
         const actions = document.querySelector('.hero-copy .actions');
-        const actionAnimation = reduced ? null : animate(actions, { opacity: [0, 1] }, { duration: .7, delay: 1.25, ease: [.44, 0, .56, 1] });
+        const actionAnimation = reduced ? null : animate(actions, { opacity: [0, 1] }, { duration: .6, delay: .25, ease: [.22, 1, .36, 1] });
         return () => {
             actionAnimation?.stop();
             actions.style.removeProperty('opacity');
@@ -147,32 +129,6 @@ function LandingMotion({ host, mobileImage, webImage }) {
 
     useEffect(() => {
         paintDashboard(dashboardPosition.get());
-    }, [reduced, mobile]);
-
-    // The video uses one entrance for each section, not repeated opacity changes
-    // on its heading and an extra scale applied to the whole phone photograph.
-    useEffect(() => {
-        const sections = [...document.querySelectorAll('.benefits, .pricing, .footer-card')];
-        const animations = new Map();
-        if (reduced) {
-            sections.forEach(element => { element.style.removeProperty('opacity'); element.style.removeProperty('transform'); });
-            return;
-        }
-        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const element = entry.target;
-            animations.set(element, animate(element, { opacity: [0, 1], y: [mobile ? 24 : 64, 0] }, entranceSpring));
-            observer.unobserve(element);
-        }), { threshold: 0 });
-        sections.forEach(element => {
-            element.style.opacity = '0';
-            observer.observe(element);
-        });
-        return () => {
-            observer.disconnect();
-            animations.forEach(animation => animation.stop());
-            sections.forEach(element => { element.style.removeProperty('opacity'); element.style.removeProperty('transform'); });
-        };
     }, [reduced, mobile]);
 
     const transition = reduced ? { duration: 0 } : slideSpring;
@@ -207,5 +163,5 @@ if (host) {
         });
         createRoot(element).render(<HeroWords lines={lines} delay={delay} />);
     }
-    createRoot(host).render(<MotionConfig reducedMotion="never"><LandingMotion host={host} mobileImage={mobileImage} webImage={webImage} /></MotionConfig>);
+    createRoot(host).render(<MotionConfig reducedMotion={document.documentElement.dataset.motion === 'full' ? 'never' : 'user'}><LandingMotion host={host} mobileImage={mobileImage} webImage={webImage} /></MotionConfig>);
 }

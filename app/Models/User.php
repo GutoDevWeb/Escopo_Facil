@@ -11,10 +11,19 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
+    protected static function booted(): void
+    {
+        static::deleting(fn (User $user) => $user->notifications()->delete());
+    }
+
     public function plan()
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function subscriptions() { return $this->hasMany(Subscription::class); }
+    public function projects() { return $this->hasMany(Project::class); }
+    public function joinedProjects() { return $this->belongsToMany(Project::class, 'project_members')->withPivot('role')->withTimestamps(); }
 
     /**
      * The attributes that are mass assignable.
@@ -51,6 +60,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_admin' => 'boolean',
+            'is_demo' => 'boolean',
             'password' => 'hashed',
             'terms_accepted_at' => 'datetime',
         ];

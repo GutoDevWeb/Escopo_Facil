@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class,
+            fn ($event) => app(\App\Services\UsageMetrics::class)->record($event->user, true));
         RateLimiter::for('registration', fn (Request $request) => Limit::perMinute(5)->by('register:'.$request->ip()));
         RateLimiter::for('password-recovery', fn (Request $request) => Limit::perMinute(5)->by('recovery:'.$request->ip()));
         RateLimiter::for('password-reset', fn (Request $request) => Limit::perMinute(10)->by('reset:'.$request->ip()));

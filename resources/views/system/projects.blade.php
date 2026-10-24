@@ -1,0 +1,77 @@
+@extends('layouts.system')
+@section('content')
+<div class="projetos">
+    <!-- Header -->
+    <div class="projetos-header">
+        <h1 class="projetos-title">Projetos</h1>
+        <div class="projetos-header-right">
+            @include('system.notification-bell')
+            <div class="projetos-user user-menu-trigger" style="padding:6px 8px;gap:10px">
+                <?= \App\Support\SystemAvatar::renderAvatar($usuario['avatar'], $usuario['nome'], 'projetos-avatar') ?>
+                <div class="projetos-user-info">
+                    <span class="projetos-user-name"><?= htmlspecialchars($usuario['nome']) ?></span>
+                    <span class="projetos-user-role"><?= htmlspecialchars($usuario['role']) ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de busca e botão -->
+    <div class="projetos-toolbar">
+        <div class="projetos-search">
+            <img src="{{ url('/system') }}/assets/icon/search.svg" alt="Buscar" class="projetos-search-icon">
+            <input type="text" placeholder="Busque por título ou descrição do projeto…" class="projetos-search-input" id="projetos-search-input">
+        </div>
+        <button class="projetos-btn-criar">
+            <img src="{{ url('/system') }}/assets/icon/plus.svg" alt="+" class="projetos-btn-icon"> Criar projeto
+        </button>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="projetos-grid">
+        <?php foreach ($projetos as $index => $projeto):
+            $isAdmin = $projeto['role'] === 'admin';
+            $roleClass = $isAdmin ? 'admin' : 'membro';
+            $icon = $isAdmin ? url('/system') . '/assets/icon/user-key.svg' : url('/system') . '/assets/icon/user-lock.svg';
+            $badgeText = $isAdmin ? 'Admin' : 'Membro';
+        ?>
+        <div class="projeto-card" data-search="<?= htmlspecialchars(strtolower($projeto['titulo'] . ' ' . $projeto['descricao'] . ' ' . $badgeText), ENT_QUOTES) ?>">
+            <div class="projeto-card-top">
+                <div class="projeto-card-icon projeto-card-icon--<?= $roleClass ?>">
+                    <img src="<?= $icon ?>" alt="<?= $badgeText ?>">
+                </div>
+                <span class="projeto-badge projeto-badge--<?= $roleClass ?>"><?= $badgeText ?></span>
+            </div>
+            <h2 class="projeto-card-title"><?= htmlspecialchars($projeto['titulo']) ?></h2>
+            <p class="projeto-card-desc"><?= htmlspecialchars($projeto['descricao']) ?></p>
+            <div class="projeto-card-avatars">
+                <?php foreach (array_slice($projeto['membros'], 0, 4) as $membro): ?>
+                    <?= \App\Support\SystemAvatar::renderAvatar($membro['avatar'], $membro['nome'], 'projeto-card-avatar-item') ?>
+                <?php endforeach; ?>
+                <?php if ($projeto['membros_extra'] > 0): ?>
+                    <span class="projeto-card-extra">+<?= $projeto['membros_extra'] ?></span>
+                <?php endif; ?>
+            </div>
+            <div class="projeto-card-separator"></div>
+            <div class="projeto-card-actions">
+                <a class="projeto-btn-ver" href="{{ url('/system') }}/index.php?page=tarefas&projeto_id=<?= (int) $projeto['id'] ?>">Ver tarefas</a>
+                <?php if ($isAdmin): ?>
+                    <button class="projeto-btn-gerenciar" data-index="<?= $index ?>">Gerenciar</button>
+                <?php else: ?>
+                    <button class="projeto-btn-detalhes" data-index="<?= $index ?>">Ver detalhes</button>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+@include('system.modals.novo-projeto')
+@include('system.modals.gerenciar-projeto')
+@include('system.modals.visualizar-projeto')
+
+<script>
+    window.projetosMock = <?= json_encode($projetos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
+
+@endsection

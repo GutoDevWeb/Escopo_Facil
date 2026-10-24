@@ -19,22 +19,24 @@ class SubscriptionController extends Controller
         abort_unless(in_array(config('payments.driver'), ['local', 'abacate'], true), 503);
     }
 
-    public function start(Request $request)
+    public function start(Request $request, string $slug = 'pro')
     {
+        abort_unless(in_array($slug, ['pro', 'equipe'], true), 404);
         $period = $request->validate(['period' => ['nullable', 'in:monthly,yearly']])['period'] ?? 'yearly';
 
-        return view('welcome', ['checkoutOpen' => true, 'checkoutPeriod' => $period]);
+        return view('welcome', ['checkoutOpen' => true, 'checkoutPeriod' => $period, 'checkoutPlan' => $slug]);
     }
 
-    public function options(Request $request)
+    public function options(Request $request, string $slug = 'pro')
     {
-        $plan = Plan::where('slug', 'pro')->first();
+        abort_unless(in_array($slug, ['pro', 'equipe'], true), 404);
+        $plan = Plan::where('slug', $slug)->first();
         if (! $plan) {
-            return response()->json(['message' => 'O plano Pro está indisponível no momento. Tente novamente em instantes.'], 503);
+            return response()->json(['message' => 'O plano selecionado está indisponível no momento. Tente novamente em instantes.'], 503);
         }
 
         return response()->json([
-            'plan' => ['id' => $plan->id, 'name' => $plan->name, 'monthly' => (int) round($plan->price_monthly * 100), 'yearly' => (int) round($plan->price_yearly * 100)],
+            'plan' => ['id' => $plan->id, 'slug' => $plan->slug, 'name' => $plan->name, 'monthly' => (int) round($plan->price_monthly * 100), 'yearly' => (int) round($plan->price_yearly * 100)],
             'authenticated' => $request->user() !== null,
             'verified' => $request->user()?->hasVerifiedEmail() ?? false,
             'email' => $request->user()?->email,
@@ -45,10 +47,10 @@ class SubscriptionController extends Controller
     public function checkout(Request $request, Plan $plan)
     {
         $this->available();
-        abort_unless($plan->slug === 'pro', 404);
+        abort_unless(in_array($plan->slug, ['pro', 'equipe'], true), 404);
         $period = $request->validate(['period' => ['nullable', 'in:monthly,yearly']])['period'] ?? 'monthly';
 
-        return view('welcome', ['checkoutOpen' => true, 'checkoutPeriod' => $period]);
+        return view('welcome', ['checkoutOpen' => true, 'checkoutPeriod' => $period, 'checkoutPlan' => $plan->slug]);
     }
 
     public function process(Request $request, AbacatePix $gateway)
@@ -56,7 +58,7 @@ class SubscriptionController extends Controller
         $this->available();
         $data = $request->validate(['plan_id' => ['required', 'integer', 'exists:plans,id'], 'period' => ['required', 'in:monthly,yearly']]);
         $plan = Plan::findOrFail($data['plan_id']);
-        abort_unless($plan->slug === 'pro', 422);
+        abort_unless(in_array($plan->slug, ['pro', 'equipe'], true), 422);
         $amount = (int) round($plan->{'price_'.$data['period']} * 100);
         abort_unless($amount >= 100, 422);
         $payment = PixPayment::where('user_id', $request->user()->id)->where('plan_id', $plan->id)

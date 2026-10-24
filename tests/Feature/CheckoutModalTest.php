@@ -120,7 +120,7 @@ class CheckoutModalTest extends TestCase
 
     public function test_custom_quote_plan_does_not_open_a_purchase_checkout(): void
     {
-        $team = Plan::create(['name' => 'Escopo Equipe', 'slug' => 'equipe', 'price_monthly' => 49.90]);
+        $team = Plan::create(['name' => 'Escopo Equipe', 'slug' => 'custom', 'price_monthly' => 49.90]);
 
         $this->actingAs(User::factory()->create())
             ->get(route('subscription.checkout', ['plan' => $team]))->assertNotFound();

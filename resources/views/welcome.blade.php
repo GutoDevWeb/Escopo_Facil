@@ -47,10 +47,16 @@
     <a class="button" data-checkout-link href="{{ route('subscription.start', ['period' => 'yearly']) }}">Comprar agora</a>
 </article>
 <article class="plan">
-    <p class="plan-label">Escopo Equipe</p><h3>Flexível</h3>
+    <?php
+        $teamPlan = \App\Models\Plan::where('slug', 'equipe')->first();
+        $teamMonthly = number_format($teamPlan?->price_monthly ?? 49.90, 2, ',', '.');
+        $teamYearly = number_format($teamPlan?->price_yearly ?? 499.00, 2, ',', '.');
+    ?>
+    <p class="plan-label">Escopo Equipe</p>
+    <h3 class="price"><span data-yearly="{{ $teamYearly }}" data-monthly="{{ $teamMonthly }}">R$ {{ $teamYearly }}</span> <small class="price-period" data-price-period>/ano</small></h3>
     <p class="plan-description">Para grupos maiores e projetos</p>
     <ul><li>Tudo do Pro</li><li>Permissões por função</li><li>Suporte à equipe</li><li>Histórico de tarefas</li><li>Acompanhamento completo</li></ul>
-    <a class="button soft" data-login-trigger aria-haspopup="dialog" aria-controls="login-modal" href="{{ route('login') }}">Comprar agora</a>
+    <a class="button soft" data-checkout-link href="{{ route('subscription.plan.start', ['slug' => 'equipe', 'period' => 'yearly']) }}">Comprar agora</a>
 </article>
 </div><p class="plan-note" role="status" aria-live="polite">Exibindo valores anuais.</p></section>
 <x-contact-section />
@@ -59,7 +65,7 @@
 <x-site-footer />
 <x-support-whatsapp />
 <x-login-modal :auth-screen="$authScreen ?? null" :auth-email="$authEmail ?? null" :auth-token="$authToken ?? null" />
-<x-checkout-modal :initial-period="$checkoutPeriod ?? 'yearly'" :initial-open="$checkoutOpen ?? false" />
+<x-checkout-modal :initial-period="$checkoutPeriod ?? 'yearly'" :initial-open="$checkoutOpen ?? false" :initial-plan="$checkoutPlan ?? 'pro'" />
 <x-system-entry />
 <x-legal-modal />
 </body></html>

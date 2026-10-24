@@ -9,6 +9,8 @@ class Subscription extends Model
 {
     use HasFactory;
 
+    protected function casts(): array { return ['expires_at' => 'datetime']; }
+
     protected $fillable = [
         'user_id',
         'plan_id',
