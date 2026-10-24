@@ -13,7 +13,6 @@
 </div>
 
 <div class="dashboard-container">
-    @include('system.plan-overview')
 
     <div class="stats-grid">
         <div class="stat-card">

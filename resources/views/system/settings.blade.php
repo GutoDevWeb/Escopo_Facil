@@ -19,6 +19,7 @@
 
     <!-- Conteúdo principal -->
     <div class="configuracao-body">
+        @include('system.plan-overview')
 
         <!-- Card: Dados pessoais -->
         <div class="configuracao-card">

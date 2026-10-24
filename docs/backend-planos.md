@@ -4,7 +4,7 @@
 
 A documentação recebida em 23/10/2026 descrevia o backend anterior, mas verificar apenas `users.plan_id` não comprova uma assinatura paga nem restringe funcionalidades. Agora `App\Services\PlanAccess` determina os direitos efetivos em cada requisição. Os arquivos de `backup_antigo` foram consultados como referência de dados e fluxos e permanecem intactos.
 
-Regra confirmada pela equipe: seguir o site, com projetos ilimitados e diferenças por funcionalidade; o Free não bloqueia após os sete dias anunciados como período inicial. Também não foi estabelecida uma cota numérica de membros. `config/entitlements.php` permite configurar um prazo Free, caso essa regra seja alterada. As cotas numéricas continuam editáveis pela administração (`-1` = ilimitado), incluindo o proprietário na contagem de membros por projeto. A migration de alinhamento altera apenas as cotas idênticas às antigas do seeder; limites personalizados são preservados.
+Regra atualizada: projetos ilimitados e diferenças por funcionalidade. Nos primeiros sete dias da criação da conta Free, todos os recursos de Pro e Equipe estão liberados. Ao vencer o teste, a conta continua no Free, com funcionalidades pagas bloqueadas e dados preservados. O prazo não reinicia ao fazer login. `config/entitlements.php` define `free_trial_days=7`; isso controla o acesso completo temporário, não a validade do acesso básico. As cotas administrativas usam -1 para ilimitado. A matriz abaixo representa o Free após o teste.
 
 | Recurso | Free | Pro | Equipe |
 | --- | --- | --- | --- |

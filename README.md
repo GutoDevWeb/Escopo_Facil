@@ -1,59 +1,65 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Escopo Fácil
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicação web acadêmica para organizar projetos, tarefas e equipes, desenvolvida no curso de **Tecnologia em Sistemas para Internet do Centro Universitário Senac**.
 
-## About Laravel
+## Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Site responsivo com animações, planos, contato e documentos legais.
+- Cadastro, login, confirmação de e-mail e recuperação de senha.
+- Projetos, Kanban, busca, checklists, prioridades e prazos.
+- Planos **Free**, **Escopo Pro** e **Equipe**, com permissões verificadas no backend e sete dias de teste completo para novas contas Free.
+- Checkout PIX de **simulação**, painel administrativo e notificações internas.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**PHP 8.2+ · Laravel 12 · Blade · SQLite · JavaScript · React 19 · Motion · CSS · Vite 7 · PHPUnit 11**
 
-## Learning Laravel
+O projeto também utiliza Tailwind/Alpine na base Breeze, Chart.js nos gráficos e QRCode no checkout. As versões e o papel de cada dependência estão na [documentação completa](docs/projeto.md).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Rodar localmente
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Requisitos: PHP/Composer, PDO SQLite e Node.js 20.19+ ou 22.12+ com npm.
 
-## Laravel Sponsors
+Na raiz de uma instalação nova:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```sh
+composer install
+php -r "file_exists('.env') || copy('.env.example', '.env');"
+php artisan key:generate
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+php artisan migrate --seed
+npm ci
+npm run build
+php artisan serve
+```
 
-### Premium Partners
+Acesse `http://127.0.0.1:8000` e ajuste `APP_URL` no `.env` para esse endereço. Configure SMTP no `.env` para receber a confirmação de cadastro. Durante o desenvolvimento do frontend, use `npm run dev` em outro terminal.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Contas de demonstração
 
-## Contributing
+```sh
+php artisan dev:plan-demos
+php artisan dev:create-admin
+php artisan dev:notification
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+As contas demonstrativas possuem projetos e tarefas de exemplo. Confira os [logins e o roteiro de comparação dos planos](docs/contas-demonstracao.md). A conta administrativa usa as variáveis `DEV_ADMIN_EMAIL` e `DEV_ADMIN_PASSWORD`; sem senha configurada, o comando gera uma aleatória.
 
-## Code of Conduct
+## Verificação
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```sh
+php artisan test
+npm run build
+```
 
-## Security Vulnerabilities
+## Documentação
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- [Visão geral, arquitetura, tecnologias e instalação](docs/projeto.md)
+- [Planos e autorização](docs/backend-planos.md)
+- [Autenticação](docs/autenticacao.md)
+- [Pagamentos PIX simulados](docs/pagamentos-pix.md)
+- [Administração e e-mail](docs/sistema-admin-email.md)
 
-## License
+O checkout é acadêmico, sem cobrança real. O `.env`, o banco local e as dependências instaladas não são versionados. `Sistema` (anteriormente `backup_antigo`) preserva a implementação anterior; a aplicação atual utiliza o Laravel.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Equipe:** Natan Oliveira, Guilherme Augusto e Nicollas Ramos.

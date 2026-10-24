@@ -13,7 +13,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_original_system_opens_with_real_empty_data(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['created_at' => now()->subDays(8)]);
         $this->actingAs($user)->get('/dashboard')->assertOk()->assertSee('sidebar-logo')->assertSee('Projetos Ativos')->assertSee('Nenhuma tarefa ainda.');
         $this->get('/projects')->assertOk()->assertSee('projetos-grid')->assertSee('Criar projeto');
         $this->get('/profile')->assertOk()->assertSee('Dados pessoais')->assertSee('Salvar avatar');
@@ -22,7 +22,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_original_modals_create_project_task_and_checklist_on_free(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['created_at' => now()->subDays(8)]);
         $this->actingAs($user)->post('/system/actions/projetos/criar.php', ['titulo' => 'Meu projeto', 'descricao' => 'Sem dados antigos'])->assertRedirect('/projects');
         $p = Project::firstOrFail();
         $this->get('/projects/'.$p->id)->assertOk()->assertSee('kanban')->assertSee('Meu projeto');
@@ -37,7 +37,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_bridge_cannot_bypass_ownership_or_paid_features(): void
     {
-        $owner = User::factory()->create(); $other = User::factory()->create();
+        $owner = User::factory()->create(['created_at' => now()->subDays(8)]); $other = User::factory()->create(['created_at' => now()->subDays(8)]);
         $p = $owner->projects()->create(['title' => 'Private']);
         $payload = ['projeto_id' => $p->id, 'titulo' => 'Task', 'status' => 1, 'prioridade' => 3, 'prazo' => ''];
         $this->actingAs($other)->postJson('/system/actions/tarefas/criar.php', $payload)->assertForbidden();
@@ -49,7 +49,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_pro_and_team_actions_use_the_project_owners_subscription(): void
     {
-        $u = User::factory()->create(); $p = $u->projects()->create(['title' => 'Pro']);
+        $u = User::factory()->create(['created_at' => now()->subDays(8)]); $p = $u->projects()->create(['title' => 'Pro']);
         Subscription::create(['user_id' => $u->id, 'plan_id' => Plan::where('slug', 'pro')->value('id'), 'status' => 'active', 'expires_at' => now()->addMonth()]);
         $this->actingAs($u)->postJson('/system/actions/tarefas/criar.php', ['projeto_id' => $p->id, 'titulo' => 'Prioridade', 'status' => 2, 'prioridade' => 3, 'prazo' => '2027-01-01'])->assertOk();
         $this->assertDatabaseHas('tasks', ['priority' => 'high', 'status' => 'doing', 'due_date' => '2027-01-01']);
@@ -57,7 +57,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_avatar_is_saved_and_unsafe_values_are_rejected(): void
     {
-        $u = User::factory()->create();
+        $u = User::factory()->create(['created_at' => now()->subDays(8)]);
         $this->actingAs($u)->post('/system/actions/usuario/atualizar-avatar.php', ['avatar' => 'grad-ocean:rocket'])->assertRedirect('/profile');
         $this->assertSame('grad-ocean:rocket', $u->fresh()->avatar);
         $this->postJson('/system/actions/usuario/atualizar-avatar.php', ['avatar' => '#ffffff:url(evil)'])->assertUnprocessable();
@@ -65,7 +65,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_native_forms_keep_validation_redirects_and_csrf_inside_the_form(): void
     {
-        $u = User::factory()->create();
+        $u = User::factory()->create(['created_at' => now()->subDays(8)]);
         $response = $this->actingAs($u)->get('/projects')->assertOk();
         $this->assertStringContainsString('action="'.url('/system').'/actions/projetos/criar.php"', $response->getContent());
         $this->from('/projects')->post('/system/actions/projetos/criar.php', ['titulo' => ''])->assertRedirect('/projects')->assertSessionHasErrors('title');
@@ -73,7 +73,7 @@ class SystemInterfaceTest extends TestCase
 
     public function test_free_cannot_clear_a_premium_deadline_through_the_rest_endpoint(): void
     {
-        $u = User::factory()->create(); $p = $u->projects()->create(['title' => 'Free']);
+        $u = User::factory()->create(['created_at' => now()->subDays(8)]); $p = $u->projects()->create(['title' => 'Free']);
         $t = $p->tasks()->make(['title' => 'Prazo existente', 'due_date' => '2027-01-01']); $t->user_id = $u->id; $t->save();
         $this->actingAs($u)->patchJson(route('projects.tasks.update', [$p, $t]), ['due_date' => null])->assertForbidden();
         $this->assertSame('2027-01-01', $t->fresh()->due_date->format('Y-m-d'));

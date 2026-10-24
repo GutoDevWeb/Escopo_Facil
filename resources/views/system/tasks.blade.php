@@ -46,8 +46,8 @@
     <?php else: ?>
         @include('system.plan-overview', ['projectAccess' => $access])
         <nav class="system-project-links">
-            @if(in_array('reports', $access['features']))<a href="{{ route('projects.report', $project) }}">Relatório do projeto</a>@endif
-            @if(in_array('history', $access['features']))<a href="{{ route('projects.history', $project) }}">Histórico de tarefas</a>@endif
+            @if(in_array('reports', $access['features']))<a href="{{ route('projects.report', $project) }}">Relatório do projeto</a>@else<span class="feature-locked-link" title="Disponível a partir do Pro">@include('system.lock-icon') Relatório do projeto · Pro</span>@endif
+            @if(in_array('history', $access['features']))<a href="{{ route('projects.history', $project) }}">Histórico de tarefas</a>@else<span class="feature-locked-link" title="Disponível no Equipe">@include('system.lock-icon') Histórico de tarefas · Equipe</span>@endif
         </nav>
         <div class="task-search-container">
             <div class="search-input-wrapper">

@@ -6,11 +6,11 @@ O login verificado abre `/dashboard` com o layout do sistema de `backup_antigo`:
 
 `SystemController` prepara os dados das telas; `SystemActionController` traduz os payloads dos componentes antigos para as operações autorizadas de `WorkspaceController`. As URLs de compatibilidade `/system/actions/...php` são rotas Laravel, protegidas por autenticação, confirmação de e-mail, CSRF e policies. Os arquivos públicos contêm somente recursos estáticos.
 
-As regras dos planos permanecem no servidor. Os controles de prioridades/prazos ficam ocultos para Free; relatórios aparecem no Pro/Equipe e histórico no Equipe. A permissão de edição também considera proprietário, gestor, membro, visualizador e projeto arquivado. O indicador da sidebar sempre mostra o plano **do usuário conectado**, inclusive quando ele participa de projeto pertencente a outro plano.
+As regras dos planos permanecem no servidor. O Free tem sete dias de todos os recursos, contados da criação da conta. Depois, prioridades, prazos, relatórios e funções de Equipe são bloqueados, com cadeados cinza na interface; o acesso básico continua disponível. O resumo do plano e a validade do teste ficam em Configuração. A permissão de edição também considera proprietário, gestor, membro, visualizador e projeto arquivado. O indicador da sidebar sempre mostra o plano **do usuário conectado**, inclusive quando ele participa de projeto pertencente a outro plano. O card de acesso ao site fica restrito a contas comuns Free.
 
 ## Administração
 
-`/admin` exige `auth`, `verified` e `admin`. O atributo `users.is_admin` controla o perfil administrativo; ele não pode ser preenchido pelo cadastro público. O link Administração e o rótulo **Admin 👑** aparecem apenas para administradores. Um administrador não recebe automaticamente uma assinatura comercial: perfil administrativo e plano são conceitos separados.
+`/admin` exige `auth`, `verified` e `admin`. O atributo `users.is_admin` controla o perfil administrativo; ele não pode ser preenchido pelo cadastro público. O link Administração e o rótulo minimalista **Admin** aparecem apenas para administradores. Um administrador não recebe automaticamente uma assinatura comercial: perfil administrativo e plano são conceitos separados.
 
 O painel inclui:
 
@@ -40,7 +40,7 @@ O comando funciona apenas em `local/testing`, exige senha com pelo menos 12 cara
 
 ## Diagnóstico e configuração de e-mail
 
-O backup possui `backup_antigo/includes/mailer.php`, que utiliza `mail()` nativo. O `.env.example` antigo contém remetente e opções de links de depuração, sem usuário/senha SMTP. Não havia `.env` SMTP no backup para importar. O Laravel estava com `MAIL_MAILER=log`: a mensagem era registrada localmente, sem envio externo.
+O legado possui `Sistema/includes/mailer.php` (originalmente em `backup_antigo`), que utiliza `mail()` nativo. O `.env.example` antigo contém remetente e opções de links de depuração, sem usuário/senha SMTP. Não havia `.env` SMTP no backup para importar. O Laravel estava com `MAIL_MAILER=log`: a mensagem era registrada localmente, sem envio externo.
 
 O fluxo existente é **confirmação de endereço de e-mail**, por link assinado e com expiração; não é autenticação em dois fatores a cada login. Cadastro e reenvio utilizam as notificações Laravel e o template `emails/auth.blade.php`; erros de transporte não são apresentados como envio concluído. A confirmação continua exigindo a conta autenticada correspondente, assinatura e hash válidos.
 
@@ -81,7 +81,7 @@ O Laragon deste computador possui Mailpit. Foi validado no navegador, em banco S
 
 Mailpit local: `http://127.0.0.1:8025`, SMTP `127.0.0.1:1025`. Para usá-lo, configure host/porta locais, usuário e senha vazios e `MAIL_REQUIRE_TLS=false`. Ele captura mensagens para testes e não as entrega na Internet.
 
-No último teste Gmail, `MAIL_PASSWORD` ainda estava vazio. A entrega externa permanece pendente dessa configuração; não foi declarada como validada.
+Após configurar uma conta Gmail existente e sua senha de aplicativo, o servidor aceitou o envio e o responsável confirmou o recebimento da mensagem. A entrega SMTP externa foi validada neste ambiente. Credenciais reais permanecem somente no `.env` local; novas instalações precisam configurar suas próprias contas.
 
 ## Instalação e validação
 

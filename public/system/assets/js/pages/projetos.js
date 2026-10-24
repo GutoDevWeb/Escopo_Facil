@@ -99,7 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const card = membrosGrid.lastElementChild;
             const menuBtn = card.querySelector('.membro-card-menu');
             if (membro.id === projeto.owner_id) menuBtn.hidden = true;
-            card.querySelector('.membro-card-dropdown-promote').hidden = !projeto.can_roles;
+            const roleAction = card.querySelector('.membro-card-dropdown-promote');
+            roleAction.disabled = !projeto.can_roles;
+            if (!projeto.can_roles) { roleAction.classList.add('feature-locked-link'); roleAction.textContent = 'Permissões por função · Equipe'; roleAction.insertAdjacentHTML('afterbegin', '<svg class="feature-lock-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="8" width="12" height="9" rx="2"/><path d="M6.5 8V5.5a3.5 3.5 0 0 1 7 0V8"/></svg>'); }
             const dropdown = card.querySelector('.membro-card-dropdown');
 
             menuBtn.addEventListener('click', function (e) {

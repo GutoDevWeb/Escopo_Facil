@@ -42,6 +42,14 @@
 .plan-feature small { font-size: 11px; color: #198052; }
 .plan-feature.is-locked { background: #fafafa; border-color: #e8e8ec; }
 .plan-feature.is-locked small { color: #8b0836; }
+.feature-lock-icon { display: inline-block; width: 15px; height: 15px; flex-shrink: 0; color: #939aa5; vertical-align: middle; }
+.feature-locked-link { display: inline-flex; gap: 6px; align-items: center; color: #939aa5; font-size: 13px; cursor: not-allowed; }
+.feature-is-locked { color: #939aa5 !important; cursor: not-allowed; }
+.feature-is-locked .custom-select-trigger,.feature-is-locked input { color: #939aa5 !important; background: #f3f4f6 !important; cursor: not-allowed; }
+.feature-is-locked label,.feature-is-locked .card-detail-label { display: flex; gap: 6px; align-items: center; color: #939aa5; }
+.priority-tag.feature-is-locked,.datetime-priority.feature-is-locked { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; font-size: 11px; background: #f0f1f3; border-radius: 6px; }
+.plan-trial-notice { padding: 14px 16px; margin-top: 16px; border-radius: 10px; background: #f8f2f5; color: #725566; font-size: 13px; line-height: 1.7; }
+.plan-trial-notice strong { color: #8b0836; }
 .plan-demo-guide { padding-top: 14px; margin-top: 16px; border-top: 1px solid #eee; color: #667183; font-size: 12px; line-height: 1.7; }
 @media(max-width:900px) { .plan-feature-grid { grid-template-columns: 1fr; } .plan-overview-heading { align-items: start; flex-direction: column; } }
 .admin-muted { color: #77808d; font-size: 13px; margin: 8px 0 16px; }

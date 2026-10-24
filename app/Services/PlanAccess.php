@@ -20,15 +20,25 @@ class PlanAccess
 
     public function active(User $user): bool
     {
-        $plan = $this->plan($user);
-        if (! $plan) return false;
+        return $this->plan($user) !== null;
+    }
+
+    private function trialEndsAt(User $user): ?\Illuminate\Support\Carbon
+    {
         $days = config('entitlements.free_trial_days');
-        return $plan->slug !== 'free' || $days === null || $user->created_at->copy()->addDays($days)->isFuture();
+        return $days && $user->created_at ? $user->created_at->copy()->addDays((int) $days) : null;
+    }
+
+    public function trialActive(User $user): bool
+    {
+        return $this->plan($user)?->slug === 'free' && ($this->trialEndsAt($user)?->isFuture() ?? false);
     }
 
     public function allows(User $user, string $feature): bool
     {
-        return $this->active($user) && in_array($feature, config('entitlements.features.'.$this->plan($user)?->slug, []), true);
+        $plan = $this->plan($user);
+        $tier = $plan?->slug === 'free' && ($this->trialEndsAt($user)?->isFuture() ?? false) ? 'equipe' : $plan?->slug;
+        return $plan !== null && in_array($feature, config('entitlements.features.'.$tier, []), true);
     }
 
     public function require(User $user, string $feature): void
@@ -45,8 +55,10 @@ class PlanAccess
     public function summary(User $user): array
     {
         $plan = $this->plan($user);
-        return ['slug' => $plan?->slug, 'name' => $plan?->name, 'active' => $this->active($user),
-            'features' => $this->active($user) ? config('entitlements.features.'.$plan?->slug, []) : [],
+        $trial = $plan?->slug === 'free' && ($this->trialEndsAt($user)?->isFuture() ?? false);
+        return ['slug' => $plan?->slug, 'name' => $plan?->name, 'active' => $plan !== null,
+            'trial_active' => $trial, 'trial_ends_at' => $plan?->slug === 'free' ? $this->trialEndsAt($user)?->toIso8601String() : null,
+            'features' => $plan ? config('entitlements.features.'.($trial ? 'equipe' : $plan->slug), []) : [],
             'limits' => $plan?->limits ?? []];
     }
 }

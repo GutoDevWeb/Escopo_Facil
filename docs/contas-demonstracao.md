@@ -10,9 +10,9 @@ As contas abaixo já estão criadas no banco local. Entre pelo login normal do s
 
 ## Roteiro
 
-1. Entre em cada conta e confira o painel **Recursos do seu plano** no dashboard.
+1. Entre em cada conta e confira o painel **Seu plano** em **Configuração**. O dashboard fica reservado aos indicadores e gráficos.
 2. Abra **Projetos → Ver tarefas** no projeto de exemplo. O painel mostra os recursos do plano do proprietário desse projeto.
-3. No Free, abra um cartão: título, descrição, status e checklist estão disponíveis; prioridade e prazo não aparecem. As rotas de relatório/histórico retornam 403 mesmo se acessadas diretamente.
+3. No Free demonstrativo, abra um cartão: título, descrição, status e checklist estão disponíveis; prioridade e prazo aparecem bloqueados com cadeados cinza. As rotas de relatório/histórico retornam 403 mesmo se acessadas diretamente. Essa conta é intencionalmente datada há mais de sete dias para demonstrar o estado após o teste. Cadastros novos recebem sete dias de todos os recursos de Pro e Equipe antes desses bloqueios.
 4. No Pro, abra um cartão e altere prioridade ou prazo. Consulte **Relatório do projeto**. O histórico e as funções avançadas de membros continuam bloqueados.
 5. No Equipe, altere um cartão e abra **Histórico de tarefas**. Consulte o relatório completo, que inclui prioridades e atrasos. Em **Projetos → Gerenciar**, confira os membros identificados como Gestor e Leitor.
 

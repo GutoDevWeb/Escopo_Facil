@@ -30,7 +30,8 @@ class PlanDemoTest extends TestCase
         foreach (['free', 'pro', 'equipe'] as $tier) {
             $u = User::where('email', "demo.{$tier}@escopofacil.test")->firstOrFail();
             $p = $u->projects()->firstOrFail(); $task = $p->tasks()->firstOrFail();
-            $this->actingAs($u)->get('/dashboard')->assertOk()->assertSee('plan-feature-grid', false)->assertSee('Conta de demonstração');
+            $this->actingAs($u)->get('/dashboard')->assertOk()->assertDontSee('plan-feature-grid', false);
+            $this->get('/profile')->assertOk()->assertSee('plan-feature-grid', false);
             $this->getJson('/account/entitlements')->assertOk()->assertJsonPath('slug', $tier);
             $this->get(route('projects.show', $p))->assertOk()->assertSee('RECURSOS DESTE PROJETO');
             $payload = ['priority' => 'high', 'due_date' => today()->addWeek()->toDateString()];

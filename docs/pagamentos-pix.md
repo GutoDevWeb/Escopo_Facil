@@ -1,12 +1,12 @@
 # PIX acadêmico
 
-O botão “Comprar agora” do Pro abre o componente de pagamento sobre a landing page, com fundo em blur, sem recarregar a página. O mensal custa R$ 27,90; o anual custa R$ 238,80 à vista (equivalente a R$ 19,90/mês). Equipe continua sob consulta. Não há cartão nem renovação automática.
+Os botões “Comprar agora” do Pro e do Equipe abrem o componente de pagamento sobre a landing page, com fundo em blur, sem recarregar a página. Os valores iniciais são R$ 27,90/mês ou R$ 238,80/ano para Pro (equivalente a R$ 19,90/mês no anual), e R$ 49,90/mês ou R$ 499,00/ano para Equipe. O checkout usa os valores do catálogo no servidor. Não há cartão nem renovação automática.
 
 ## Apresentação sem serviço externo (padrão)
 
 1. Execute `php artisan migrate`, `php artisan db:seed --class=PlanSeeder` e `npm run build`. O seeder pode ser repetido: cadastra apenas planos ausentes e preserva os existentes.
 2. Mantenha `APP_ENV=local` e `PIX_DRIVER=local` no `.env`.
-3. Clique em “Comprar agora” ou acesse `/assinar/pro`. Para visitantes sem sessão, o pagamento abre e em seguida apresenta o mesmo modal de login do botão “Entre” do header. Quem ainda não tem conta pode escolher “Criar conta” no login. Após autenticar e confirmar o e-mail, o fluxo retorna ao pagamento com o período preservado, inclusive após atualizar a aba. Gere o QR Code e clique em “Simular pagamento”.
+3. Clique em “Comprar agora” ou acesse `/assinar/pro` ou `/assinar/equipe`. Para visitantes sem sessão, o pagamento abre e em seguida apresenta o mesmo modal de login do botão “Entre” do header. Quem ainda não tem conta pode escolher “Criar conta” no login. Após autenticar e confirmar o e-mail, o fluxo retorna ao pagamento com o plano e o período preservados, inclusive após atualizar a aba. Gere o QR Code e clique em “Simular pagamento”.
 
 O modal compartilha a identidade visual da autenticação: fontes locais, logo, cartão branco arredondado e botões vinho. O período é alterado sem navegação; os valores são obtidos do servidor por `/checkout/options/pro`. A URL acompanha o modal, que pode ser fechado pelo X, Escape ou clique fora. O pedido pendente é restaurado ao reabrir ou recarregar. Login comum continua direcionando ao sistema; o login iniciado durante a compra retorna ao modal. Gerar ou confirmar pagamento continua exigindo sessão e e-mail confirmado. Se o catálogo estiver sem o plano Pro, o modal mostra uma mensagem de indisponibilidade em vez de uma página 404.
 

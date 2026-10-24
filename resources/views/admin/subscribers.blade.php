@@ -4,7 +4,14 @@
 @include('admin.navigation')
 @if(session('success'))<div class="system-alert" role="status">{{ session('success') }}</div>@endif
 <section class="admin-panel">
-    <h2>Assinantes</h2><p class="admin-muted">{{ $users->total() }} usuários cadastrados. Planos pagos exigem uma data de validade.</p>
+    <div class="admin-users-header">
+        <div><h2>Assinantes</h2><p class="admin-muted">{{ $users->total() }} usuários encontrados. Planos pagos exigem uma data de validade.</p></div>
+        <form method="GET">
+            <label class="sr-only" for="admin-search">Buscar usuários</label>
+            <input id="admin-search" name="search" value="{{ request('search') }}" placeholder="Nome ou e-mail">
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
     <div class="admin-table-scroll"><table class="admin-table"><thead><tr><th>Usuário</th><th>Plano atual</th><th>Atualizar assinatura</th></tr></thead><tbody>
     @forelse($users as $subscriber)
         @php
@@ -19,7 +26,7 @@
             <label>Validade do plano pago<input type="datetime-local" name="expires_at" value="{{ $subscription?->expires_at->format('Y-m-d\TH:i') }}"></label>
             <button class="admin-button" type="submit">Salvar assinatura</button>
         </form></td></tr>
-    @empty<tr><td colspan="3">Nenhum usuário cadastrado.</td></tr>@endforelse
+    @empty<tr><td colspan="3">Nenhum usuário encontrado.</td></tr>@endforelse
     </tbody></table></div>
     <div class="admin-pagination">{{ $users->links() }}</div>
 </section>

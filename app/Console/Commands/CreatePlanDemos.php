@@ -33,6 +33,8 @@ class CreatePlanDemos extends Command
             }
             foreach (['free', 'pro', 'equipe'] as $tier) {
                 $u = $accounts[$tier]; $plan = Plan::where('slug', $tier)->firstOrFail();
+                // Keep this example explicitly outside the trial to demonstrate locks.
+                if ($tier === 'free' && $u->created_at->gt(now()->subDays(7))) $u->forceFill(['created_at' => now()->subDays(8)])->save();
                 if ($tier !== 'free' && !$u->subscriptions()->where('plan_id', $plan->id)->where('status', 'active')->where('expires_at', '>', now())->exists()) {
                     $u->subscriptions()->where('status', 'active')->update(['status' => 'replaced']);
                     Subscription::create(['user_id' => $u->id, 'plan_id' => $plan->id, 'status' => 'active', 'expires_at' => now()->addYear()]);

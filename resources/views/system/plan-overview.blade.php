@@ -8,11 +8,16 @@
         ['roles', 'Trabalho em equipe', 'Permissões por função, histórico e relatórios completos.', 'Equipe'],
     ] as [$feature, $label, $description, $required])
         <article class="plan-feature {{ in_array($feature, $featureAccess['features']) ? 'is-available' : 'is-locked' }}">
-            <div><span class="plan-feature-symbol" aria-hidden="true">{{ in_array($feature, $featureAccess['features']) ? '✓' : '🔒' }}</span><strong>{{ $label }}</strong></div>
+            <div><span class="plan-feature-symbol" aria-hidden="true">@if(in_array($feature, $featureAccess['features']))✓@else @include('system.lock-icon') @endif</span><strong>{{ $label }}</strong></div>
             <p>{{ $description }}</p><small>{{ in_array($feature, $featureAccess['features']) ? 'Disponível neste plano' : 'Requer plano '.$required }}</small>
         </article>
     @endforeach
     </div>
+    @if($featureAccess['trial_active'] ?? false)
+    <p class="plan-trial-notice"><strong>Teste completo ativo até {{ \Carbon\Carbon::parse($featureAccess['trial_ends_at'])->format('d/m/Y H:i') }}.</strong> Durante os primeiros 7 dias da conta, todos os recursos de Pro e Equipe estão liberados. Depois, você continua no Free, com as funcionalidades pagas bloqueadas. Seus dados são preservados.</p>
+    @elseif(($featureAccess['slug'] ?? '') === 'free')
+    <p class="plan-demo-guide">O período de teste completo terminou. Sua conta continua no Free; as opções com cadeado exigem uma assinatura Pro ou Equipe.</p>
+    @endif
     @if(isset($canWrite) && !$canWrite)
     <p class="plan-demo-guide">{{ isset($project) && $project->archived ? 'Projeto arquivado: a edição está desabilitada.' : 'Seu acesso a este projeto é somente leitura: você pode consultar os cartões e checklists, sem alterar os dados.' }}</p>
     @endif

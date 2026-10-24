@@ -20,7 +20,7 @@ class PlanAuthorizationTest extends TestCase
 
     private function account(string $tier = 'free'): User
     {
-        $user = User::factory()->create(['plan_id' => Plan::where('slug', $tier)->value('id')]);
+        $user = User::factory()->create(['plan_id' => Plan::where('slug', $tier)->value('id'), 'created_at' => now()->subDays(8)]);
         if ($tier !== 'free') Subscription::create(['user_id' => $user->id, 'plan_id' => $user->plan_id,
             'status' => 'active', 'expires_at' => now()->addMonth()]);
         return $user;
@@ -177,12 +177,12 @@ class PlanAuthorizationTest extends TestCase
         $this->assertDatabaseCount('subscriptions',0);
     }
 
-    public function test_free_continues_by_default_and_optional_trial_does_not_block_profile_or_checkout(): void
+    public function test_free_continues_after_the_full_trial_without_blocking_profile_or_checkout(): void
     {
         $user=$this->account(); $user->forceFill(['created_at'=>now()->subDays(8)])->save();
         $this->actingAs($user)->get('/dashboard')->assertOk();
         config(['entitlements.free_trial_days'=>7]);
-        $this->getJson('/projects')->assertForbidden();
+        $this->getJson('/projects')->assertOk();
         $this->get('/profile')->assertOk();
         $this->get('/assinar/pro')->assertOk();
     }

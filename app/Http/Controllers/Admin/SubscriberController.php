@@ -14,7 +14,14 @@ class SubscriberController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::with('plan')->latest('id')->paginate(25);
+        $data = $request->validate(['search' => ['nullable', 'string', 'max:200']]);
+        $search = trim($data['search'] ?? '');
+        $users = User::with('plan')
+            ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%');
+            }))
+            ->latest('id')->paginate(25)->withQueryString();
         return $request->expectsJson() ? response()->json($users) : view('admin.subscribers', ['users' => $users, 'plans' => Plan::whereIn('slug', ['free', 'pro', 'equipe'])->get()]);
     }
 

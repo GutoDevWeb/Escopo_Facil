@@ -34,6 +34,7 @@
         </a>
     </nav>
 
+    @if(!auth()->user()->is_admin && app(\App\Services\PlanAccess::class)->plan(auth()->user())?->slug === 'free')
     <div class="sidebar-banner">
         <div class="sidebar-banner-icon">
             <img src="{{ url('/system') }}/assets/icon/logo/Vector%20(3).svg" alt="Escopo Fácil" width="32" height="32">
@@ -48,6 +49,7 @@
         </a>
     </div>
 
+    @endif
     <div class="sidebar-logout">
         <div class="sidebar-plan {{ auth()->user()->is_admin ? 'sidebar-plan--admin' : '' }}" aria-label="Perfil ou plano atual">
             @if(auth()->user()->is_admin)
