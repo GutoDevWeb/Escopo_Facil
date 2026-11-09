@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('plan_id')->nullable()->constrained('plans')->onDelete('set null'); //Ligar o utilizador a um plano.
+            // A referência é adicionada depois da criação da tabela plans.
+            $table->foreignId('plan_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

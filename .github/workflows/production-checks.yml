@@ -1,4 +1,4 @@
-name: Production checks
+name: Verificações de hospedagem
 
 on:
   push:
@@ -50,9 +50,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: php artisan test --compact
-      - name: Build production image
+      - name: Construir imagem de produção
         run: docker build -f Dockerfile.vercel -t escopo-ci .
-      - name: Prepare isolated CI database and validate production configuration
+      - name: Preparar banco isolado e validar configuração de produção
         shell: bash
         run: |
           cat > /tmp/escopo-ci.env <<'ENV'
@@ -90,7 +90,7 @@ jobs:
           docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan migrate --force
           docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan db:seed --class=PlanSeeder --force
           docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan deploy:check
-      - name: Smoke test container HTTP and blocked private paths
+      - name: Testar HTTP do contêiner e bloqueio de caminhos privados
         shell: bash
         run: |
           docker run -d --name escopo-http --network host --env-file /tmp/escopo-ci.env escopo-ci
