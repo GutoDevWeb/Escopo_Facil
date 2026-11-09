@@ -74,7 +74,9 @@
 
 <script>
 window.addEventListener('load', function () {
-    const cores = ['#8B0836', '#64748b', '#10b981'];
+    const darkTheme = document.documentElement.dataset.theme === 'dark';
+    const chartAccent = darkTheme ? '#ff9cbc' : '#8b0836';
+    const cores = [chartAccent, darkTheme ? '#8795ae' : '#64748b', '#10b981'];
 
     // GRÁFICO DE ROSCA (Status)
     const ctxStatus = document.getElementById('tasksChart');
@@ -114,13 +116,13 @@ window.addEventListener('load', function () {
                 datasets: [{
                     label: 'Concluídas',
                     data: <?= $performanceJson ?>,
-                    borderColor: '#8B0836',
-                    backgroundColor: 'rgba(139, 8, 54, 0.05)',
+                    borderColor: chartAccent,
+                    backgroundColor: darkTheme ? 'rgba(255,156,188,.08)' : 'rgba(139,8,54,.05)',
                     fill: true,
                     tension: 0.4,
                     borderWidth: 2,
                     pointRadius: 3,
-                    pointBackgroundColor: '#8B0836'
+                    pointBackgroundColor: chartAccent
                 }]
             },
             options: {

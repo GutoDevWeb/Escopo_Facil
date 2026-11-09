@@ -52,7 +52,7 @@
     right: 12px;
     width: 8px;
     height: 8px;
-    background: var(--color-danger);
+    background: var(--theme-danger-action, var(--color-danger));
     border-radius: 50%;
 }
 
@@ -105,15 +105,15 @@
 }
 
 .configuracao-feedback--success {
-    background: #e8f7ee;
-    border: 1px solid #9ed8b4;
-    color: #1f6b3a;
+    background: var(--theme-inset, #e8f7ee);
+    border: 1px solid var(--theme-success-bg, #9ed8b4);
+    color: var(--theme-success-text, #1f6b3a);
 }
 
 .configuracao-feedback--error {
-    background: #fdecec;
-    border: 1px solid #f2b8b8;
-    color: #9f2424;
+    background: var(--theme-inset, #fdecec);
+    border: 1px solid var(--theme-danger-bg, #f2b8b8);
+    color: var(--theme-danger-text, #9f2424);
 }
 
 /* Card */
@@ -250,12 +250,12 @@
     font-family: var(--font-family);
     font-weight: 600;
     font-size: 14px;
-    color: var(--color-danger);
+    color: var(--theme-danger-text, var(--color-danger));
     cursor: pointer;
     white-space: nowrap;
 }
 
 .configuracao-btn-excluir:hover {
-    background: var(--color-danger);
-    color: var(--color-white);
+    background: var(--theme-danger-action, var(--color-danger));
+    color: var(--theme-on-primary, #fff);
 }

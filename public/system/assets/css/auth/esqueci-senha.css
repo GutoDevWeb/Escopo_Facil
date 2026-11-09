@@ -40,13 +40,13 @@
 .esqueci-footer {
     font-size: 16px;
     font-weight: 500;
-    color: #718096;
+    color: var(--theme-info-text, #718096);
     text-align: center;
     margin-top: var(--spacing-md);
 }
 
 .esqueci-footer a {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     font-weight: 700;
     text-decoration: none;
 }

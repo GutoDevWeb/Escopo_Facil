@@ -76,6 +76,8 @@ docker run --rm --env-file .env.production escopo-facil php artisan deploy:check
 
 O `.env.production` usado nesses comandos deve conter as mesmas variáveis privadas configuradas na Vercel e permanecer fora do Git. Alternativamente executar os comandos em um runner privado com PHP 8.4, dependências e acesso ao banco. Migrations nunca são executadas em cada requisição nem no início automático de cada instância. Não usar `migrate:fresh` em produção.
 
+**Neon:** para migrations e alterações de estrutura, use a URL **direta/unpooled**, disponível em **Connect** ao desativar o pooling. Ela aponta para o mesmo banco, sem `-pooler` no hostname. O site pode manter a URL pooled na Vercel. Se necessário, utilize um arquivo privado separado para os comandos administrativos; não substitua a conexão da aplicação apenas para executar migrations. [Orientação do Neon](https://neon.com/docs/connect/connection-pooling).
+
 `deploy:check` valida a configuração, conexão, tabelas, planos e ausência de contas demonstrativas sem enviar mensagens ou imprimir credenciais. Ele não autentica no Gmail nem prova que o destinatário recebeu o e-mail.
 
 ## 4. Configurar o projeto Vercel

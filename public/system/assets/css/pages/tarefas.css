@@ -298,9 +298,9 @@
 }
 
 /* cores das prioridades */
-.low p { background: #CBF4C9; color: #0E6245; }
-.medium p { background: #F8E5BA; color: #9C3F0F; }
-.high p { background: #F9DEDC; color: #8C1D18; }
+.low p { background: var(--theme-success-bg, #CBF4C9); color: var(--theme-success-text, #0E6245); }
+.medium p { background: var(--theme-warning-bg, #F8E5BA); color: var(--theme-warning-text, #9C3F0F); }
+.high p { background: var(--theme-danger-bg, #F9DEDC); color: var(--theme-danger-text, #8C1D18); }
 
 /* input de data */
 .input-deadline {
@@ -434,7 +434,7 @@
 }
 
 .checklist-delete-btn:hover {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
 }
 
 .checklist-add {
@@ -473,7 +473,7 @@
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    color: var(--color-white);
+    color: var(--theme-on-primary, #fff);
     overflow: hidden;
 }
 
@@ -530,7 +530,7 @@
 
 .btn-delete {
     background-color: var(--color-primary);
-    color: var(--color-white);
+    color: var(--theme-on-primary, #fff);
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
@@ -577,7 +577,7 @@
     font-size: 20px;
 }
 
-.required {color: var(--color-primary);}
+.required {color: var(--theme-accent, var(--color-primary));}
 
 .modal-body {
     display: flex;
@@ -944,7 +944,7 @@ button {
 
 .btn-save-detail {
     background: var(--color-primary);
-    color: var(--color-white);
+    color: var(--theme-on-primary, #fff);
     border: none;
     border-radius: 8px;
     padding: 10px 16px;
@@ -973,9 +973,9 @@ button {
 }
 
 .btn-delete-detail:hover {
-    background: #fff0f0;
+    background: var(--theme-inset, #fff0f0);
     border-color: #e53e3e;
-    color: #e53e3e;
+    color: var(--theme-danger-text, #e53e3e);
 }
 
 /* ================= RESPONSIVIDADE ======================== */
@@ -1143,9 +1143,9 @@ button {
 .no-project-select {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--theme-border, #E2E8F0);
     border-radius: 8px;
-    background: #fff;
+    background: var(--theme-panel, #fff);
     font-size: 14px;
     color: var(--color-text-strong, #1a1a2e);
     cursor: pointer;

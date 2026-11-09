@@ -18,8 +18,8 @@
     position: fixed;
     z-index: 1000;
     width: 240px;
-    background: #fff;
-    border: 1px solid #E2E8F0;
+    background: var(--theme-panel, #fff);
+    border: 1px solid var(--theme-border, #E2E8F0);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     padding: 6px;
@@ -59,7 +59,7 @@
 .user-menu-nome {
     font-size: 13px;
     font-weight: 600;
-    color: #1a1a2e;
+    color: var(--theme-text, #1a1a2e);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -67,7 +67,7 @@
 
 .user-menu-email {
     font-size: 12px;
-    color: #697386;
+    color: var(--theme-muted, #697386);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -76,7 +76,7 @@
 /* Separador */
 .user-menu-divider {
     height: 1px;
-    background: #F1F5F9;
+    background: var(--theme-inset, #F1F5F9);
     margin: 2px 4px 6px;
 }
 
@@ -89,29 +89,29 @@
     border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    color: #2D3748;
+    color: var(--theme-text, #2D3748);
     text-decoration: none;
     transition: background 0.12s;
     cursor: pointer;
 }
 
 .user-menu-item:hover {
-    background: #F7F8FA;
+    background: var(--theme-inset, #F7F8FA);
 }
 
 .user-menu-item svg {
     flex-shrink: 0;
-    color: #697386;
+    color: var(--theme-muted, #697386);
 }
 
 .user-menu-item--danger {
-    color: #C53030;
+    color: var(--theme-danger-text, #C53030);
 }
 
 .user-menu-item--danger svg {
-    color: #C53030;
+    color: var(--theme-danger-text, #C53030);
 }
 
 .user-menu-item--danger:hover {
-    background: #FFF5F5;
+    background: var(--theme-inset, #FFF5F5);
 }

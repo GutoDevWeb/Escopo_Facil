@@ -38,37 +38,37 @@
 .avatar-field-label {
     font-size: 14px;
     font-weight: 500;
-    color: #697386;
+    color: var(--theme-muted, #697386);
 }
 
 /* Override light theme para o picker dentro da auth */
 .avatar-field .avatar-picker-toggle-icons {
-    background: #F7F8FA;
-    border-color: #E2E8F0;
-    color: #2D3748;
+    background: var(--theme-inset, #F7F8FA);
+    border-color: var(--theme-border, #E2E8F0);
+    color: var(--theme-text, #2D3748);
 }
 
 .avatar-field .avatar-picker-toggle-icons:hover {
-    background: #EDF2F7;
+    background: var(--theme-inset, #EDF2F7);
 }
 
 .avatar-field .avatar-picker-toggle-chevron {
-    color: #697386;
+    color: var(--theme-muted, #697386);
 }
 
 .avatar-field .avatar-picker-icons-panel {
-    background: #F7F8FA;
-    border-color: #E2E8F0;
+    background: var(--theme-inset, #F7F8FA);
+    border-color: var(--theme-border, #E2E8F0);
 }
 
 .avatar-field .avatar-picker-search {
-    background: #fff;
-    border-color: #E2E8F0;
-    color: #2D3748;
+    background: var(--theme-panel, #fff);
+    border-color: var(--theme-border, #E2E8F0);
+    color: var(--theme-text, #2D3748);
 }
 
 .avatar-field .avatar-picker-icon:hover {
-    background: #EDF2F7;
+    background: var(--theme-inset, #EDF2F7);
 }
 
 .avatar-field .avatar-picker-icon--selected {
@@ -76,7 +76,7 @@
 }
 
 .avatar-field .avatar-picker-icons-grid::-webkit-scrollbar-thumb {
-    background: #CBD5E0;
+    background: var(--theme-hover, #CBD5E0);
 }
 
 /* --- Footer --- */
@@ -84,13 +84,13 @@
     font-family: var(--font-family);
     font-size: 16px;
     font-weight: 500;
-    color: #718096;
+    color: var(--theme-info-text, #718096);
     text-align: center;
     margin-top: var(--spacing-md);
 }
 
 .cadastro-footer a {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     font-weight: 700;
     text-decoration: none;
 }

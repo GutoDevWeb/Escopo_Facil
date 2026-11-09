@@ -19,8 +19,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: #FAFAFA;
-    border: 1px solid #E2E8F0;
+    background: var(--theme-inset, #FAFAFA);
+    border: 1px solid var(--theme-border, #E2E8F0);
     border-radius: 8px;
     padding: 0 16px;
     height: 56px;
@@ -36,13 +36,13 @@
     font-family: var(--font-family);
     font-weight: 400;
     font-size: 14px;
-    color: #697386;
+    color: var(--theme-muted, #697386);
     line-height: 1;
     margin-bottom: 1px;
 }
 
 .form-group label .required {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     margin-left: 1px;
 }
 
@@ -65,7 +65,7 @@
     font-family: var(--font-family);
     font-weight: 500;
     font-size: 16px;
-    color: #A3ACB9;
+    color: var(--theme-muted, #A3ACB9);
 }
 
 /* --- Select wrapper --- */
@@ -80,7 +80,7 @@
     -webkit-appearance: none;
     cursor: pointer;
     padding-right: 24px;
-    color: #A3ACB9;
+    color: var(--theme-muted, #A3ACB9);
 }
 
 .input-select-wrapper select:has(option:checked:not([disabled])) {
@@ -162,7 +162,7 @@
     width: 20px;
     height: 20px;
     min-width: 20px;
-    border: 2px solid #697386;
+    border: 2px solid var(--theme-border, #697386);
     border-radius: 50%;
     cursor: pointer;
     transition: border-color 0.2s, background-color 0.2s;
@@ -187,7 +187,7 @@
 }
 
 .form-terms a {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     font-weight: 700;
     text-decoration: none;
 }
@@ -231,15 +231,15 @@
 }
 
 .auth-feedback--success {
-    background: #e8f7ee;
-    border: 1px solid #9ed8b4;
-    color: #1f6b3a;
+    background: var(--theme-inset, #e8f7ee);
+    border: 1px solid var(--theme-success-bg, #9ed8b4);
+    color: var(--theme-success-text, #1f6b3a);
 }
 
 .auth-feedback--error {
-    background: #fdecec;
-    border: 1px solid #f2b8b8;
-    color: #9f2424;
+    background: var(--theme-inset, #fdecec);
+    border: 1px solid var(--theme-danger-bg, #f2b8b8);
+    color: var(--theme-danger-text, #9f2424);
 }
 
 /* --- Responsividade --- */

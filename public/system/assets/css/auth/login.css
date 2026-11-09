@@ -54,13 +54,13 @@
 .login-footer {
     font-size: 16px;
     font-weight: 500;
-    color: #718096;
+    color: var(--theme-info-text, #718096);
     text-align: center;
     margin-top: var(--spacing-md);
 }
 
 .login-footer a {
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     font-weight: 700;
     text-decoration: none;
 }
@@ -72,7 +72,7 @@
 .esqueci-senha {
     font-weight: 600;
     font-size: 16px;
-    color: var(--color-primary);
+    color: var(--theme-accent, var(--color-primary));
     cursor: pointer;
 }
 

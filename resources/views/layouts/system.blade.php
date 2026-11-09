@@ -2,6 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
+<script src="{{ asset('system/assets/js/theme.js') }}?v={{ filemtime(public_path('system/assets/js/theme.js')) }}"></script>
 <link rel="icon" href="{{ asset('system/assets/icon/logo/Vector (3).svg') }}">
 @foreach(['global','layout','auth/components','avatar','toast','user-menu'] as $css)
 <link rel="stylesheet" href="{{ asset('system/assets/css/'.$css.'.css') }}">
@@ -10,11 +11,13 @@
 <link rel="stylesheet" href="{{ asset('system/assets/css/pages/'.$page.'.css') }}">
 @endif
 <link rel="stylesheet" href="{{ asset('system/assets/css/integration.css') }}">
+<link rel="stylesheet" href="{{ asset('system/assets/css/theme.css') }}?v={{ filemtime(public_path('system/assets/css/theme.css')) }}">
 </head><body data-base-url="{{ url('/system') }}" data-usuario-id="{{ auth()->id() }}" data-features='@json($access["features"])' data-can-write="{{ ($canWrite ?? true) ? 'true' : 'false' }}">
 <div class="layout">
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <img src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil">
+        <img class="sidebar-logo-light" src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil" width="185" height="54">
+        <img class="sidebar-logo-dark" src="{{ asset('system/assets/images/logo-dark.png') }}" alt="Escopo Fácil" width="504" height="161">
     </div>
 
     <nav class="sidebar-nav">
@@ -51,6 +54,11 @@
 
     @endif
     <div class="sidebar-logout">
+        <button class="system-theme-switch" type="button" role="switch" data-theme-toggle aria-label="Modo escuro" aria-checked="false" title="Ativar modo escuro">
+            <svg class="theme-switch-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+            <svg class="theme-switch-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 14a8.6 8.6 0 0 1-10.6-10.7A9 9 0 1 0 20.7 14Z"/></svg>
+            <span class="theme-switch-thumb" aria-hidden="true"></span>
+        </button>
         <div class="sidebar-plan {{ auth()->user()->is_admin ? 'sidebar-plan--admin' : '' }}" aria-label="Perfil ou plano atual">
             @if(auth()->user()->is_admin)
                 <span class="sidebar-admin-label">Admin</span>
