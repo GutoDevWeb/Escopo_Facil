@@ -134,7 +134,7 @@ Fazer backup consistente do banco e dos arquivos persistentes, publicar a nova v
 
 ## 6. Limite atual: pagamentos
 
-**O PIX implementado é acadêmico e está bloqueado em produção.** Publicar o site não habilita compras de Pro/Equipe. Não basta trocar uma chave para habilitar cobrança real: falta definir e implementar o fluxo de produção, incluindo confirmação confiável do provedor, webhook e tratamento do ciclo de assinatura. Antes do lançamento comercial, decidir esse fluxo e alinhar os botões e textos do site. A administração pode atribuir assinaturas manualmente com validade, conforme as regras existentes.
+**O PIX implementado é acadêmico, sem cobrança real.** Para demonstrar a compra de Pro/Equipe na hospedagem, configure `PIX_DEMO_ENABLED=true`, `PIX_DRIVER=abacate` e uma chave `dev_` em `ABACATEPAY_DEV_KEY`, mantendo `APP_ENV=production`, e faça um novo deploy. O padrão é desabilitado; driver local e chaves reais são recusados na hospedagem. Veja o [guia de deploy](deploy-vercel.md). Uma futura cobrança real exige fluxo próprio, webhook e tratamento do ciclo de assinatura. A administração também pode atribuir assinaturas manualmente com validade.
 
 ## Referências
 

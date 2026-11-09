@@ -117,7 +117,15 @@ vercel deploy --prod
 
 O preparo do código não cria banco, conta Google ou projeto Vercel. Nenhum deploy externo é considerado validado antes dos testes acima. O Gmail possui limites de envio e pode restringir mensagens; esta configuração atende à demonstração acadêmica e deve ser acompanhada durante os testes.
 
-**Pagamentos permanecem como demonstração acadêmica, sem cobranças reais.** A integração com cobrança real não é um requisito deste deploy. Mantém-se o comportamento atual: o simulador de PIX funciona em local/testing e fica bloqueado no ambiente hospedado com `APP_ENV=production`. É possível usar o Free com avaliação e atribuir planos demonstrativos pela administração com validade. A interface hospedada informa a indisponibilidade da contratação online. Não alterar o ambiente para `local`, expor segredos de desenvolvimento ou usar uma chave real para contornar o bloqueio.
+**Pagamentos permanecem como demonstração acadêmica, sem cobranças reais.** Para demonstrar a compra de Pro e Equipe na hospedagem, mantenha `APP_ENV=production` e configure as variáveis abaixo na Vercel. Depois faça um novo deploy:
+
+```dotenv
+PIX_DEMO_ENABLED=true
+PIX_DRIVER=abacate
+ABACATEPAY_DEV_KEY=dev_SUA_CHAVE_DE_TESTE
+```
+
+A chave deve ser criada no modo de desenvolvimento da AbacatePay e mantida como segredo no servidor. O fluxo gera QR Code de teste, permite clicar em **Simular pagamento** e só ativa o plano após o servidor consultar o provedor e receber `PAID`. Não transferir dinheiro. Chaves `prod_` e o simulador local são recusados na hospedagem, mesmo com a opção habilitada. Com `PIX_DEMO_ENABLED=false` (padrão), o checkout hospedado permanece indisponível. Free com avaliação e atribuição de planos pela administração continuam disponíveis.
 
 Os termos e a privacidade mantêm a versão acadêmica `2026-10-22`, a identificação institucional e os avisos de simulação do site. A hospedagem não elimina os cuidados com dados pessoais: os responsáveis devem confirmar os contatos e os prazos de conservação/backups dos serviços contratados.
 

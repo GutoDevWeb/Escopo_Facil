@@ -32,6 +32,12 @@ O backend usa a API v2:
 
 A criação verifica `devMode: true` e o valor recebido. Credenciais sem prefixo `dev_` são recusadas antes da requisição. O código fornecido pela API é convertido em QR localmente. O botão de simular chama o provedor, e a assinatura só é liberada após consulta server-side retornar `PAID`. O navegador consulta a cada 6 segundos enquanto a aba está visível. A integração externa precisa ser validada com uma chave Dev real; testes automatizados usam respostas HTTP simuladas.
 
-Não há webhook nesta etapa: o polling evita exigir domínio público/túnel na apresentação local. Para uma implantação real, será necessário outro trabalho: webhook autenticado e idempotente, conciliação de pagamentos com a aba fechada, estorno, tratamento de renovação/expiração e revisão das permissões de administração. O checkout e seus endpoints de simulação estão bloqueados fora de `local`/`testing`; não basta trocar por uma chave de produção.
+## Demonstração no site hospedado
+
+Mantenha `APP_ENV=production`. Na Vercel, configure `PIX_DEMO_ENABLED=true`, `PIX_DRIVER=abacate` e `ABACATEPAY_DEV_KEY` com uma chave `dev_` da AbacatePay. Faça um novo deploy para aplicar as variáveis. As mesmas regras de autenticação, confirmação de e-mail, propriedade do pedido, validade e ativação sem duplicação continuam valendo. O visitante pode simular a compra de Pro ou Equipe e acessar os recursos correspondentes. A demonstração não concede acesso administrativo.
+
+O padrão continua bloqueado na hospedagem. Mesmo habilitada, a demonstração recusa driver local e chave de cobrança real. A criação ainda exige `devMode: true`; o botão de simulação não ativa o plano sem confirmação server-side do provedor.
+
+Não há webhook nesta etapa: o status é consultado enquanto o checkout está aberto. Para cobranças reais será necessário outro trabalho: webhook autenticado e idempotente, conciliação com a aba fechada, estorno e tratamento de renovação/expiração. Este projeto continua sem cobranças reais.
 
 Referências: https://docs.abacatepay.com/pages/devmode , https://docs.abacatepay.com/pages/transparents/create , https://docs.abacatepay.com/pages/transparents/check , https://docs.abacatepay.com/pages/transparents/simulate-payment .

@@ -1,0 +1,28 @@
+.site-install { max-width: 1200px; margin: 0 auto 28px; padding: 0 24px; color: var(--wine, #8b0836); }
+@media (max-width: 809px) {
+    header { max-width: calc(100% - 24px); }
+    header .header-account { min-width: 0; gap: 8px; }
+    header .header-login { padding: 10px; font-size: 13px; }
+    header .header-cta { padding: 12px; }
+    header .menu { min-width: 44px; min-height: 44px; }
+    .hero-copy { padding: 0 20px; }
+    .hero h1 { font-size: clamp(32px, 8vw, 46px); line-height: 1.16; }
+    .hero-copy p { font-size: 16px; line-height: 1.65; }
+    .dashboard-stage { height: auto; aspect-ratio: 1425 / 1024; margin: 0 16px; }
+    .workspace { width: 100%; max-width: 100%; left: auto; }
+    .actions { flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .plans .plan, .plans .plan.featured { min-height: 0; padding: 28px 24px; }
+    .plans .plan .button { margin-top: 24px; min-height: 48px; }
+    .site-footer-columns { gap: 28px 20px; }
+    .site-footer { overflow-wrap: anywhere; }
+    .site-footer a, .site-footer [data-app-install] { min-height: 36px; }
+    .contact-form input, .contact-form textarea, .login-modal input, .login-modal select { font-size: 16px; }
+    .login-modal-overlay { padding: 12px; }
+    .login-modal { max-height: calc(100dvh - 24px); }
+}
+@media (max-width: 400px) {
+    header .logo { width: 100px; }
+    header .header-cta { display: none; }
+    .site-footer-columns { grid-template-columns: minmax(0, 1fr); }
+    .section { padding-left: 16px; padding-right: 16px; }
+}

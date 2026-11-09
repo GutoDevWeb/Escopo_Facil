@@ -3,7 +3,6 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
 <script src="{{ asset('system/assets/js/theme.js') }}?v={{ filemtime(public_path('system/assets/js/theme.js')) }}"></script>
-<link rel="icon" href="{{ asset('system/assets/icon/logo/Vector (3).svg') }}">
 @foreach(['global','layout','auth/components','avatar','toast','user-menu'] as $css)
 <link rel="stylesheet" href="{{ asset('system/assets/css/'.$css.'.css') }}">
 @endforeach
@@ -12,9 +11,18 @@
 @endif
 <link rel="stylesheet" href="{{ asset('system/assets/css/integration.css') }}">
 <link rel="stylesheet" href="{{ asset('system/assets/css/theme.css') }}?v={{ filemtime(public_path('system/assets/css/theme.css')) }}">
+<link rel="stylesheet" href="{{ asset('system/assets/css/mobile.css') }}?v={{ filemtime(public_path('system/assets/css/mobile.css')) }}">
+<x-app-install-head />
+<script src="{{ asset('system/assets/js/mobile.js') }}?v={{ filemtime(public_path('system/assets/js/mobile.js')) }}" defer></script>
 </head><body data-base-url="{{ url('/system') }}" data-usuario-id="{{ auth()->id() }}" data-features='@json($access["features"])' data-can-write="{{ ($canWrite ?? true) ? 'true' : 'false' }}">
 <div class="layout">
-<aside class="sidebar">
+<header class="system-mobile-header">
+    <button type="button" data-sidebar-toggle aria-controls="system-sidebar" aria-expanded="false" aria-label="Abrir menu"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a href="{{ route('dashboard') }}" aria-label="Escopo Fácil — Dashboard"><img src="{{ asset('icons/icon-192.png') }}" width="32" height="32" alt=""><span>Escopo Fácil</span></a>
+</header>
+<div class="sidebar-backdrop" data-sidebar-close hidden></div>
+<aside class="sidebar" id="system-sidebar" aria-label="Menu do sistema">
+    <button class="sidebar-mobile-close" type="button" data-sidebar-close aria-label="Fechar menu">×</button>
     <div class="sidebar-logo">
         <img class="sidebar-logo-light" src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil" width="185" height="54">
         <img class="sidebar-logo-dark" src="{{ asset('system/assets/images/logo-dark.png') }}" alt="Escopo Fácil" width="504" height="161">

@@ -19,7 +19,7 @@ class PixCheckoutTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['payments.driver' => 'local']);
+        config(['payments.driver' => 'local', 'payments.production_demo_enabled' => false]);
         Http::preventStrayRequests();
         $this->plan = Plan::create(['name' => 'Escopo Pro', 'slug' => 'pro', 'price_monthly' => 27.90, 'price_yearly' => 238.80]);
     }
@@ -128,6 +128,54 @@ class PixCheckoutTest extends TestCase
         $this->postJson($charge['simulate_url'])->assertOk()->assertJsonPath('status', 'paid');
         $this->assertSame($this->plan->id, $user->fresh()->plan_id);
         Http::assertSent(fn ($request) => str_ends_with($request->url(), '/transparents/create') && $request['method'] === 'PIX' && $request['data']['amount'] === 2790);
+    }
+
+    public function test_hosted_demo_activates_pro_and_team_only_after_provider_confirmation(): void
+    {
+        $this->app->instance('env', 'production');
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+        config(['payments.production_demo_enabled' => true, 'payments.driver' => 'abacate', 'payments.abacate_key' => 'dev_test']);
+        Plan::create(['name' => 'Escopo Equipe', 'slug' => 'equipe', 'price_monthly' => 49.90, 'price_yearly' => 499]);
+
+        foreach (['pro', 'equipe'] as $slug) {
+            Http::swap(new \Illuminate\Http\Client\Factory);
+            Http::preventStrayRequests();
+            $plan = Plan::where('slug', $slug)->firstOrFail();
+            $id = 'demo_'.$slug;
+            $amount = (int) round($plan->price_monthly * 100);
+            Http::fake([
+                '*/transparents/create' => Http::response(['success' => true, 'data' => ['id' => $id, 'amount' => $amount, 'devMode' => true, 'brCode' => 'demo-code', 'expiresAt' => now()->addMinutes(15)->toIso8601String()]]),
+                '*/transparents/simulate-payment*' => Http::response(['success' => true, 'data' => ['id' => $id]]),
+                '*/transparents/check*' => Http::sequence()
+                    ->push(['success' => true, 'data' => ['id' => $id, 'status' => 'PENDING']])
+                    ->push(['success' => true, 'data' => ['id' => $id, 'status' => 'PAID']]),
+            ]);
+            $user = User::factory()->create();
+            $this->actingAs($user);
+            $this->getJson('/checkout/options/'.$slug)->assertJsonPath('checkout_available', true);
+            $charge = $this->postJson('/checkout/process', ['plan_id' => $plan->id, 'period' => 'monthly'])->assertOk()->json();
+            $this->getJson($charge['status_url'])->assertJsonPath('status', 'pending');
+            $this->assertNull($user->fresh()->plan_id);
+            $this->postJson($charge['simulate_url'])->assertOk()->assertJsonPath('status', 'paid');
+            $this->assertSame($plan->id, $user->fresh()->plan_id);
+            $this->postJson($charge['simulate_url'])->assertOk();
+            $this->assertSame(1, Subscription::where('user_id', $user->id)->count());
+        }
+    }
+
+    public function test_hosted_demo_rejects_local_driver_and_live_credentials_even_when_enabled(): void
+    {
+        $this->app->instance('env', 'production');
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+        $this->actingAs(User::factory()->create());
+        config(['payments.production_demo_enabled' => true]);
+        foreach (['local' => 'dev_test', 'abacate' => 'prod_invalid'] as $driver => $key) {
+            config(['payments.driver' => $driver, 'payments.abacate_key' => $key]);
+            $this->getJson('/checkout/options/pro')->assertJsonPath('checkout_available', false);
+            $this->postJson('/checkout/process', ['plan_id' => $this->plan->id, 'period' => 'monthly'])->assertForbidden();
+        }
+        Http::assertNothingSent();
+        $this->assertDatabaseCount('pix_payments', 0);
     }
 
     public function test_production_key_and_non_dev_responses_cannot_create_a_usable_charge(): void

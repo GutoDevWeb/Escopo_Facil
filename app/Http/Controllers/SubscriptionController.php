@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
 {
     private function available(): void
     {
-        abort_unless(app()->environment(['local', 'testing']), 403, 'O checkout acadêmico está disponível somente em ambiente local.');
+        abort_unless(\App\Services\PixDemo::available(), 403, 'A demonstração de compra está indisponível neste ambiente.');
         abort_unless(in_array(config('payments.driver'), ['local', 'abacate'], true), 503);
     }
 
@@ -36,7 +36,7 @@ class SubscriptionController extends Controller
         }
 
         return response()->json([
-            'checkout_available' => app()->environment(['local', 'testing']),
+            'checkout_available' => \App\Services\PixDemo::available(),
             'plan' => ['id' => $plan->id, 'slug' => $plan->slug, 'name' => $plan->name, 'monthly' => (int) round($plan->price_monthly * 100), 'yearly' => (int) round($plan->price_yearly * 100)],
             'authenticated' => $request->user() !== null,
             'verified' => $request->user()?->hasVerifiedEmail() ?? false,

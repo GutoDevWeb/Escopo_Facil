@@ -50,8 +50,8 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: php artisan test --compact
-      - name: Testar preferência de tema e atualização dos gráficos
-        run: node --test tests/JavaScript/theme.test.cjs
+      - name: Testar tema, gráficos e instalação pelo navegador
+        run: node --test tests/JavaScript/*.test.cjs
       - name: Construir imagem de produção
         run: docker build -f Dockerfile.vercel -t escopo-ci .
       - name: Preparar banco isolado e validar configuração de produção

@@ -132,6 +132,16 @@
             </form>
         </div>
 
+        <section class="configuracao-card configuracao-app" aria-labelledby="config-app-title">
+            <img src="{{ asset('icons/icon-192.png') }}" alt="" width="64" height="64">
+            <div class="configuracao-app-copy">
+                <h2 class="configuracao-card-title" id="config-app-title">Baixe nosso app</h2>
+                <p class="configuracao-card-desc">Tenha o Escopo Fácil na tela inicial do seu dispositivo e acesse seus projetos com mais praticidade.</p>
+                <p class="configuracao-app-note">Instalação pelo navegador. É necessário estar conectado à internet.</p>
+            </div>
+            <button class="configuracao-app-install" type="button" data-app-install>Baixe nosso app</button>
+        </section>
+
         <!-- Card: Zona de perigo -->
         <div class="configuracao-card configuracao-card--danger">
             <div class="configuracao-card-header">

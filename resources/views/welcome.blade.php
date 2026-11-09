@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<x-app-install-head />
 <title>Escopo Fácil — Organize seus projetos e tarefas</title>
 <meta name="description" content="Organize projetos, tarefas e equipes com o Escopo Fácil. Do primeiro quadro à entrega final, tudo no lugar.">
 <link rel="preload" href="{{ asset('assets/landing/open-runde-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -17,6 +18,7 @@
 <script src="{{ asset('assets/landing/login-modal.js') . '?v=' . filemtime(public_path('assets/landing/login-modal.js')) }}" defer></script>
 @vite('resources/js/landing.jsx')
 @vite('resources/js/checkout.js')
+<link rel="stylesheet" href="{{ asset('assets/landing/mobile.css') }}?v={{ filemtime(public_path('assets/landing/mobile.css')) }}">
 </head>
 <body>
 @php($startUrl = auth()->check() ? route('dashboard') : route('register'))

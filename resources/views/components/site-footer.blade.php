@@ -1,4 +1,5 @@
 <footer class="site-footer">
+    <div class="site-install"><button type="button" data-app-install>Adicionar Escopo Fácil à tela inicial ↗</button></div>
     <div class="site-footer-inner">
         <div class="site-footer-columns">
             <nav aria-label="Website"><h2>Website</h2><a href="{{ url('/') }}">Home</a><a href="#features">Funcionalidades</a><a href="#beneficios">Benefícios</a><a href="#precos">Planos</a><a href="#contato">Contato</a></nav>

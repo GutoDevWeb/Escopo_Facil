@@ -383,7 +383,7 @@ O mailer antigo usava `mail()` nativo e mensagens em texto simples. O envio atua
 - Parte do catálogo textual/preço na landing ainda é estática, conforme descrito na seção de planos.
 - Chart.js e a fonte Outfit do sistema usam recursos externos; seu carregamento depende de conectividade.
 
-Para publicação, preparar domínio/HTTPS, `APP_URL`, servidor apontando para `public`, banco, SMTP, scheduler, assets compilados e configurações do ambiente. O checkout simulado permanece bloqueado em produção pelo código atual. Não habilitar pagamentos reais apenas substituindo uma chave.
+Para publicação, preparar domínio/HTTPS, `APP_URL`, servidor apontando para `public`, banco, SMTP, scheduler, assets compilados e configurações do ambiente. A demonstração hospedada de PIX pode ser habilitada com `PIX_DEMO_ENABLED=true`, driver `abacate` e chave `dev_`, conforme o [guia de deploy](deploy-vercel.md). Não habilitar pagamentos reais apenas substituindo uma chave.
 
 ## 14. Índice dos documentos complementares
 
