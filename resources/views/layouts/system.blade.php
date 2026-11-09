@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head>
+<html lang="pt-BR" class="system-app"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
 <script src="{{ asset('system/assets/js/theme.js') }}?v={{ filemtime(public_path('system/assets/js/theme.js')) }}"></script>

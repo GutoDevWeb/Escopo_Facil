@@ -6,6 +6,7 @@
 /* estilização da header */
 .layout:has(.page-content) {
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
 }
 

@@ -103,7 +103,7 @@
 .system-dialog h2 { font-size: 23px; font-weight: 600; }
 .system-dialog .admin-muted { line-height: 1.6; }
 /* Keep all sidebar sections in the available height, rather than hiding overflow. */
-.sidebar { height: calc(100dvh - 32px); }
+.sidebar { height: calc(100% - 32px); }
 @media (max-height: 850px) {
   .sidebar { padding: 20px; }
   .sidebar-logo { height: 54px; max-width: 100%; margin-bottom: 28px; }

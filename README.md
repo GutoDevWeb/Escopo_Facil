@@ -10,12 +10,14 @@
   <img alt="Projeto acadêmico" src="https://img.shields.io/badge/projeto-acadêmico-8b0836?style=for-the-badge">
   <img alt="PHP 8.2 ou superior" src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="Laravel 12" src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white">
-  <img alt="SQLite" src="https://img.shields.io/badge/SQLite-database-003B57?style=for-the-badge&logo=sqlite&logoColor=white">
+  <img alt="PostgreSQL em produção" src="https://img.shields.io/badge/PostgreSQL-produ%C3%A7%C3%A3o-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
 </p>
 
 ## Sobre
 
-Para hospedar o projeto acadêmico completo, siga o [guia de deploy na Vercel](docs/deploy-vercel.md). A configuração usa PHP em contêiner, banco externo e e-mail transacional; o preset Vite estático não executa o backend. Planos e pagamentos permanecem demonstrativos, sem cobranças reais.
+**Acesse o projeto hospedado: [escopo-facil.vercel.app](https://escopo-facil.vercel.app/).**
+
+A aplicação está hospedada na **Vercel**, com Laravel/PHP em contêiner, banco **PostgreSQL no Neon** e envio de e-mails pelo Gmail exclusivo do projeto. O Escopo Fácil continua sendo um projeto acadêmico, sem cobranças reais. Consulte o [guia de deploy e manutenção](docs/deploy-vercel.md).
 
 O **Escopo Fácil** é uma aplicação web para gerenciamento de projetos voltada a equipes que buscam mais organização, colaboração e controle sobre suas entregas. Desenvolvido como projeto acadêmico no curso de **Tecnologia em Sistemas para Internet do Centro Universitário Senac**, reúne um site institucional, autenticação, sistema de trabalho e painel administrativo.
 
@@ -52,10 +54,11 @@ Informações espalhadas em conversas, planilhas e arquivos dificultam saber que
 | Animações da landing page | React 19, React DOM e Motion |
 | Componentes da base de autenticação | Laravel Breeze, Tailwind CSS e Alpine.js |
 | Gráficos e checkout | Chart.js e QRCode |
-| Banco de dados atual | SQLite |
-| E-mail | Notificações Laravel, Symfony Mailer e SMTP |
+| Banco de dados | PostgreSQL/Neon na hospedagem; SQLite no desenvolvimento local |
+| E-mail | Notificações Laravel, Symfony Mailer e SMTP Gmail com senha de aplicativo |
 | Build | Vite 7, Laravel Vite Plugin, Node.js e npm |
-| Testes | PHPUnit 11, Faker e Mockery |
+| Testes | PHPUnit 11, Faker, Mockery e testes JavaScript com Node.js |
+| Hospedagem e automação | Vercel, Docker, FrankenPHP/PHP 8.4, Neon e GitHub Actions |
 | Desenvolvimento | Composer, Artisan, Git/GitHub e Laragon no ambiente Windows utilizado |
 
 As versões instaladas e a função das dependências estão na [documentação completa](docs/projeto.md). O sistema anterior utilizava PHP/PDO e MySQL; sua estrutura não é necessária para executar a aplicação atual.
@@ -143,7 +146,7 @@ CRUD significa **Create, Read, Update e Delete**: criar, consultar, atualizar e 
 
 ## Banco de dados
 
-O banco atual utiliza **SQLite**, preparado por migrations e seeders Laravel.
+A instalação hospedada utiliza **PostgreSQL no Neon**, com dados persistentes fora do contêiner. O desenvolvimento local utiliza **SQLite**. Ambos são preparados por migrations e seeders Laravel; o banco SQLite local não é copiado para a hospedagem.
 
 | Tabelas | Responsabilidade |
 | --- | --- |
@@ -177,11 +180,28 @@ A confirmação de e-mail verifica o endereço cadastrado; não há segundo fato
 
 - Site com identidade visual do Escopo Fácil, navegação entre seções e animações de entrada padronizadas.
 - Dashboard com indicadores e gráficos, sem o painel detalhado do plano ocupando a área principal.
-- Sidebar com navegação, identificação do plano e rótulo administrativo discreto.
+- Sidebar com navegação, identificação do plano, rótulo administrativo discreto e sombra suave no tema claro.
+- Modo claro e escuro em todas as telas internas: dashboard, projetos, Kanban, relatórios, histórico, configuração e administração, incluindo modais, tabelas, notificações e gráficos.
+- Seletor animado de sol/lua, preferência salva no navegador e sincronizada entre abas; a primeira visita acompanha o tema do sistema operacional.
+- Logo específica para o modo escuro, com tamanho visual alinhado ao tema claro, e animação que respeita a preferência por movimento reduzido.
+- Layout ajustado à janela, com rolagem na área principal e sem a barra externa duplicada que revelava espaço vazio embaixo.
 - Kanban com cartões, modais de edição e feedback por mensagens/toasts.
 - Cadeados cinza para recursos indisponíveis após o teste Free.
 - Notificações com bolinha vermelha somente enquanto houver itens não visualizados.
 - Administração com métricas, tabelas e busca por nome ou e-mail na Visão Geral e em Gerenciar Assinaturas.
+
+## Hospedagem e operação
+
+- **Endereço público:** https://escopo-facil.vercel.app/
+- **Servidor:** Laravel em contêiner com `Dockerfile.vercel` e FrankenPHP/PHP 8.4; o Vite compila os recursos do frontend durante o build.
+- **Persistência:** PostgreSQL externo no Neon, com sessões e cache no banco. Migrations e o catálogo de planos são preparados separadamente do atendimento das requisições.
+- **E-mails:** confirmação de cadastro, recuperação de senha e contato usam SMTP do Gmail exclusivo do projeto, com remetente `escopofacil@gmail.com` e templates personalizados.
+- **Configuração:** variáveis privadas na Vercel, HTTPS, cookies seguros, logs em stderr e rotina de manutenção autenticada para assinaturas.
+- **Validação:** GitHub Actions executa build, testes, construção da imagem e verificações de hospedagem com banco isolado.
+
+Use [`.env.production.example`](.env.production.example) como referência e siga o [guia de deploy e manutenção](docs/deploy-vercel.md). `.env`, `.env.production`, senhas de aplicativo e chaves devem permanecer fora do repositório. Alterações de variáveis na Vercel exigem um novo deploy para entrar em vigor.
+
+O checkout continua demonstrativo: a confirmação de pagamento simulado é restrita a local/testing e fica bloqueada em produção. Não há integração de cobrança real.
 
 ## Como executar localmente
 
@@ -220,10 +240,11 @@ O `.env`, as senhas reais, o banco local e as dependências instaladas não são
 
 ```sh
 php artisan test
+node --test tests/JavaScript/theme.test.cjs
 npm run build
 ```
 
-A execução registrada em **24/10/2026** teve **117 testes e 719 asserções aprovados**, cobrindo autenticação, planos, permissões, checkout, administração, busca de assinantes e notificações. Consulte a documentação para o escopo das validações realizadas.
+A validação de **09/11/2026** registrou **130 testes de backend e 875 asserções aprovados**, além de **8 testes JavaScript do tema**. A cobertura inclui autenticação, planos, permissões, checkout, administração, notificações e aplicação do tema nas rotas do sistema. O seletor também testa persistência, sincronização entre abas e atualização dos gráficos.
 
 ## Objetivo acadêmico
 
@@ -240,6 +261,7 @@ O checkout opera em **simulação acadêmica, sem cobrança real**, restrita aos
 | [Autenticação](docs/autenticacao.md) | Fluxos de conta, modais e verificação. |
 | [Pagamentos PIX](docs/pagamentos-pix.md) | Checkout e ativação de assinaturas em simulação. |
 | [Administração e e-mail](docs/sistema-admin-email.md) | Painel administrativo, SMTP e personalização de mensagens. |
+| [Deploy na Vercel](docs/deploy-vercel.md) | Contêiner, variáveis, Neon, Gmail, migrations e manutenção da instalação hospedada. |
 | [Hospedagem](docs/hospedagem.md) | Preparação de produção, domínio, SMTP institucional e validação. |
 | [Contas de demonstração](docs/contas-demonstracao.md) | Contas e roteiro de comparação dos planos. |
 | [Documentos legais](docs/documentos-legais.md) | Termos, privacidade e aceite. |
