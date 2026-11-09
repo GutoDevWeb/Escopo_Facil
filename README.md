@@ -15,6 +15,8 @@
 
 ## Sobre
 
+Para hospedar o projeto acadêmico completo, siga o [guia de deploy na Vercel](docs/deploy-vercel.md). A configuração usa PHP em contêiner, banco externo e e-mail transacional; o preset Vite estático não executa o backend. Planos e pagamentos permanecem demonstrativos, sem cobranças reais.
+
 O **Escopo Fácil** é uma aplicação web para gerenciamento de projetos voltada a equipes que buscam mais organização, colaboração e controle sobre suas entregas. Desenvolvido como projeto acadêmico no curso de **Tecnologia em Sistemas para Internet do Centro Universitário Senac**, reúne um site institucional, autenticação, sistema de trabalho e painel administrativo.
 
 Com ele, os usuários criam projetos, adicionam membros, organizam tarefas em um Kanban e acompanham checklists. A plataforma também oferece personalização de perfil, relatórios e funcionalidades liberadas conforme o plano contratado.
@@ -238,6 +240,7 @@ O checkout opera em **simulação acadêmica, sem cobrança real**, restrita aos
 | [Autenticação](docs/autenticacao.md) | Fluxos de conta, modais e verificação. |
 | [Pagamentos PIX](docs/pagamentos-pix.md) | Checkout e ativação de assinaturas em simulação. |
 | [Administração e e-mail](docs/sistema-admin-email.md) | Painel administrativo, SMTP e personalização de mensagens. |
+| [Hospedagem](docs/hospedagem.md) | Preparação de produção, domínio, SMTP institucional e validação. |
 | [Contas de demonstração](docs/contas-demonstracao.md) | Contas e roteiro de comparação dos planos. |
 | [Documentos legais](docs/documentos-legais.md) | Termos, privacidade e aceite. |
 

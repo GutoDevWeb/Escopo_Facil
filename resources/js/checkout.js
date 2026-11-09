@@ -72,10 +72,15 @@ if (dialog && root) {
             const email = root.querySelector('[data-checkout-email]');
             email.textContent = options.email || '';
             email.hidden = !options.email;
-            get('generate-pix').hidden = !options.verified;
+            const available = options.checkout_available !== false;
+            get('generate-pix').hidden = !options.verified || !available;
             get('payment-login').hidden = options.authenticated;
             get('payment-verify').hidden = !options.authenticated || options.verified;
             get('payment-check-verification').hidden = !options.authenticated || options.verified;
+            if (!available) {
+                ['payment-login', 'payment-verify', 'payment-check-verification'].forEach(id => { get(id).hidden = true; });
+                message('A contratação online ainda não está disponível. Fale com nossa equipe pelo contato do site.');
+            }
         }
         root.querySelector('[data-checkout-term]').textContent = period === 'yearly' ? '12 meses de acesso. Pagamento único.' : '1 mês de acesso. Pagamento único.';
     }
@@ -177,6 +182,7 @@ if (dialog && root) {
             syncSession(data);
             screen('intro');
             updateSummary();
+            if (data.checkout_available === false) return;
             if (!data.authenticated) {
                 // Paint the payment summary before opening the shared login modal.
                 requestAnimationFrame(() => requestAnimationFrame(() => {

@@ -15,7 +15,7 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
             'uses_platform' => ['required', 'in:yes,no'],
         ]);
-        $recipients = config('legal.contact_emails');
+        $recipients = array_values(array_filter([config('mail.contact_address')]));
         abort_unless(count($recipients), 503, 'O contato está temporariamente indisponível.');
         $usesPlatform = $data['uses_platform'] === 'yes' ? 'Sim' : 'Não';
         $body = "Nome: {$data['name']}\nE-mail: {$data['email']}\nJá usa o Escopo Fácil? {$usesPlatform}\n\n{$data['message']}";

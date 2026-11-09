@@ -36,6 +36,7 @@ class SubscriptionController extends Controller
         }
 
         return response()->json([
+            'checkout_available' => app()->environment(['local', 'testing']),
             'plan' => ['id' => $plan->id, 'slug' => $plan->slug, 'name' => $plan->name, 'monthly' => (int) round($plan->price_monthly * 100), 'yearly' => (int) round($plan->price_yearly * 100)],
             'authenticated' => $request->user() !== null,
             'verified' => $request->user()?->hasVerifiedEmail() ?? false,

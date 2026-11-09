@@ -25,7 +25,7 @@ class LegalDocumentsTest extends TestCase
         foreach (['legal.terms' => 'Termos e Condições de Uso', 'legal.privacy' => 'Aviso de Privacidade'] as $route => $title) {
             $this->get(route($route))->assertOk()->assertSee($title)->assertSee('Centro Universitário Senac')
                 ->assertSee('Guilherme Augusto Tavares Cavalcante')->assertSee('Nicollas Ferreira')
-                ->assertSee('Suporte@escopofacil.com.br')
+                ->assertSee(config('legal.support_email'))
                 ->assertDontSee('Guilhermeaugusto@escopofacil.com.br')->assertDontSee('Nicollasramos@escopofacil.com.br')->assertDontSee('Natanoliveira@escopofacil.com.br')
                 ->assertSee(config('legal.version'));
             $this->get(route($route, ['version' => config('legal.version')]))->assertOk();

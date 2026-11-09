@@ -1,0 +1,27 @@
+.git
+.env
+.env.*
+!.env.production.example
+.preview
+.agents
+.codex
+node_modules
+vendor
+storage
+bootstrap/cache/*.php
+public/hot
+public/storage
+public/build
+database/*.sqlite*
+database/backups
+backup_antigo
+backup antigo
+Sistema
+tests
+docs
+*.log
+*.zip
+*.sql
+*.pem
+*.key
+auth.json

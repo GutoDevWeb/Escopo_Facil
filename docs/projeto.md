@@ -307,7 +307,7 @@ MAIL_FROM_ADDRESS=sua-conta@gmail.com
 MAIL_FROM_NAME="Escopo Fácil"
 ```
 
-Use uma senha de aplicativo pertencente à conta autenticada. O remetente deve ser autorizado pelo provedor. Valores com espaços precisam de aspas no `.env`. A caixa `Suporte@escopofacil.com.br` exibida como contato do projeto ainda não constitui, por si só, uma caixa SMTP criada.
+Use uma senha de aplicativo pertencente à conta autenticada. A conta escolhida para envio, respostas e suporte é `escopofacil@gmail.com`, exibida como Escopo Fácil. Valores com espaços precisam de aspas no `.env`. A conta e sua senha de aplicativo precisam ser configuradas no Google e nas variáveis privadas da hospedagem.
 
 Após mudar a configuração, execute `php artisan config:clear` e reinicie processos persistentes. O HTML do e-mail está em `resources/views/emails/auth.blade.php`; assunto, textos e botões são definidos em `app/Providers/AppServiceProvider.php`.
 

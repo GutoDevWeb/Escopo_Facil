@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Plan;
 use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 
+Route::get('/internal/maintenance', \App\Http\Controllers\MaintenanceController::class)->name('maintenance');
+
 Route::get('/', function () {
     return view('welcome');
 });

@@ -116,4 +116,8 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    // Caixa que recebe as mensagens do formulário, independente do remetente SMTP.
+    'contact_address' => env('CONTACT_MAIL_TO', env('SUPPORT_EMAIL', 'Suporte@escopofacil.com.br')),
+    'support_reply_to' => env('MAIL_REPLY_TO_ADDRESS', env('SUPPORT_EMAIL', 'Suporte@escopofacil.com.br')),
+
 ];

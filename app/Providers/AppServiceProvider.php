@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
         \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class,
             fn ($event) => app(\App\Services\UsageMetrics::class)->record($event->user, true));
         RateLimiter::for('registration', fn (Request $request) => Limit::perMinute(5)->by('register:'.$request->ip()));
@@ -32,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('password-reset', fn (Request $request) => Limit::perMinute(10)->by('reset:'.$request->ip()));
 
         VerifyEmail::toMailUsing(fn ($user, $url) => (new MailMessage)
+            ->when(config('mail.support_reply_to'), fn ($mail, $address) => $mail->replyTo($address, config('mail.from.name')))
             ->subject('Confirme seu e-mail — Escopo Fácil')
             ->view('emails.auth', [
                 'name' => $user->name, 'title' => 'Confirme seu e-mail',
@@ -41,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             ]));
 
         ResetPassword::toMailUsing(fn ($user, $token) => (new MailMessage)
+            ->when(config('mail.support_reply_to'), fn ($mail, $address) => $mail->replyTo($address, config('mail.from.name')))
             ->subject('Redefina sua senha — Escopo Fácil')
             ->view('emails.auth', [
                 'name' => $user->name, 'title' => 'Redefina sua senha',

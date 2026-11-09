@@ -8,7 +8,9 @@
     <div id="checkout" class="login-modal-content" data-endpoint="{{ route('subscription.process') }}" data-options-url="{{ route('subscription.options') }}" data-status-base="{{ url('/payments') }}" data-home="{{ url('/') }}" data-period="{{ $checkoutPeriod }}">
         <img class="login-modal-logo" src="{{ asset('assets/landing/logo-original.svg') }}" alt="Escopo Fácil" width="250" height="72">
 
+        @if(app()->environment(['local', 'testing']))
         <span class="checkout-simulation-badge"><span aria-hidden="true"></span>Simulação · sem cobrança real</span>
+        @endif
 
         <aside class="checkout-order" aria-label="Resumo do plano">
             <div class="checkout-order-top">
@@ -28,12 +30,12 @@
 
         <section id="payment-intro" aria-labelledby="payment-title">
             <h2 id="payment-title" tabindex="-1">Seu próximo passo é Pro</h2>
-            <p class="checkout-description">Mais controle para seus projetos. Gere o QR Code PIX e conclua a simulação para liberar seu plano.</p>
-            <button type="button" id="generate-pix" class="primary login-modal-submit">Gerar QR Code PIX</button>
+            <p class="checkout-description">{{ app()->environment('production') ? 'Conheça os recursos do plano e fale com nossa equipe para saber sobre a disponibilidade.' : 'Mais controle para seus projetos. Gere o QR Code PIX e conclua a simulação para liberar seu plano.' }}</p>
+            <button type="button" id="generate-pix" class="primary login-modal-submit" @if(app()->environment('production')) hidden @endif>Gerar QR Code PIX</button>
             <button type="button" id="payment-login" class="primary login-modal-submit" hidden>Entrar para continuar</button>
             <button type="button" id="payment-verify" class="primary login-modal-submit" hidden>Confirmar meu e-mail</button>
             <button type="button" id="payment-check-verification" class="secondary" hidden>Já confirmei meu e-mail</button>
-            <p class="checkout-note">{{ config('payments.driver') === 'local' ? 'O QR Code é demonstrativo e não é aceito em aplicativos de banco. Use “Simular pagamento” para testar.' : 'Pagamento em ambiente de teste. Utilize a simulação, sem transferir dinheiro.' }}</p>
+            <p class="checkout-note">{{ app()->environment('production') ? 'A contratação online será disponibilizada após a ativação do serviço de pagamentos.' : (config('payments.driver') === 'local' ? 'O QR Code é demonstrativo e não é aceito em aplicativos de banco. Use “Simular pagamento” para testar.' : 'Pagamento em ambiente de teste. Utilize a simulação, sem transferir dinheiro.') }}</p>
         </section>
 
         <section id="payment-pending" aria-labelledby="pix-title" hidden>

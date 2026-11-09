@@ -52,9 +52,9 @@ MAIL_SCHEME=smtp
 MAIL_REQUIRE_TLS=true
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=Ramosnicollas99@gmail.com
+MAIL_USERNAME=escopofacil@gmail.com
 MAIL_PASSWORD=
-MAIL_FROM_ADDRESS=Ramosnicollas99@gmail.com
+MAIL_FROM_ADDRESS=escopofacil@gmail.com
 MAIL_FROM_NAME="Escopo Fácil"
 ```
 
@@ -74,6 +74,12 @@ php artisan mail:test-verification email-da-conta-de-teste
 ```
 
 O link deve ser aberto no navegador autenticado nessa conta. Nenhum dos comandos imprime a senha SMTP. Ambos ficam restritos a desenvolvimento. Caso exista servidor persistente, reinicie-o depois de alterar o `.env`; limpe também o cache de configuração.
+
+### Preparação para hospedagem
+
+O modelo [`.env.production.example`](../.env.production.example) separa o remetente (`MAIL_FROM_ADDRESS`), a caixa de respostas dos e-mails de conta (`MAIL_REPLY_TO_ADDRESS`), o contato público (`SUPPORT_EMAIL`) e o destino do formulário (`CONTACT_MAIL_TO`). O formulário não usa mais `LEGAL_CONTACT_EMAILS` para definir o destino. Confirmação e recuperação são enviadas apenas ao próprio usuário, sem cópia para o administrador.
+
+O modelo de produção usa Gmail SMTP com a conta exclusiva `escopofacil@gmail.com`, nome Escopo Fácil e senha de aplicativo dessa mesma conta em `MAIL_PASSWORD`. Ela também recebe respostas e contatos. Não é necessário domínio próprio para essa opção. O [guia de hospedagem](hospedagem.md) descreve a configuração atual e mantém Resend como alternativa futura com domínio verificado. Nenhuma senha válida é incluída nos modelos ou no Git.
 
 ### Teste SMTP local executado
 

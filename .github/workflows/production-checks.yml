@@ -1,0 +1,106 @@
+name: Production checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  laravel:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: escopo_tests
+          POSTGRES_USER: escopo
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U escopo -d escopo_tests"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: escopo_tests
+      DB_USERNAME: escopo
+      DB_PASSWORD: ci-only-password
+      DB_SSLMODE: disable
+      DB_URL: ""
+      MAIL_MAILER: array
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, pdo_sqlite, mbstring, intl, zip, bcmath
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: composer install --prefer-dist --no-interaction --no-progress
+      - run: npm ci
+      - run: npm run build
+      - run: php artisan test --compact
+      - name: Build production image
+        run: docker build -f Dockerfile.vercel -t escopo-ci .
+      - name: Prepare isolated CI database and validate production configuration
+        shell: bash
+        run: |
+          cat > /tmp/escopo-ci.env <<'ENV'
+          APP_ENV=production
+          APP_DEBUG=false
+          APP_URL=https://escopofacil.test
+          APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+          DB_CONNECTION=pgsql
+          DB_HOST=127.0.0.1
+          DB_PORT=5432
+          DB_DATABASE=escopo_tests
+          DB_USERNAME=escopo
+          DB_PASSWORD=ci-only-password
+          DB_SSLMODE=disable
+          SESSION_DRIVER=database
+          SESSION_ENCRYPT=true
+          SESSION_SECURE_COOKIE=true
+          SESSION_HTTP_ONLY=true
+          CACHE_STORE=database
+          QUEUE_CONNECTION=sync
+          LOG_CHANNEL=stderr
+          MAIL_MAILER=smtp
+          MAIL_HOST=smtp.resend.com
+          MAIL_PORT=587
+          MAIL_SCHEME=smtp
+          MAIL_REQUIRE_TLS=true
+          MAIL_USERNAME=resend
+          MAIL_PASSWORD=ci-placeholder-never-used-for-sending
+          MAIL_FROM_ADDRESS=contas@escopofacil.test
+          CONTACT_MAIL_TO=suporte@escopofacil.test
+          SUPPORT_EMAIL=suporte@escopofacil.test
+          CRON_SECRET=ci-only-0000000000000000000000000000000000000000
+          PORT=8080
+          ENV
+          docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan migrate --force
+          docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan db:seed --class=PlanSeeder --force
+          docker run --rm --network host --env-file /tmp/escopo-ci.env escopo-ci php artisan deploy:check
+      - name: Smoke test container HTTP and blocked private paths
+        shell: bash
+        run: |
+          docker run -d --name escopo-http --network host --env-file /tmp/escopo-ci.env escopo-ci
+          trap 'docker logs escopo-http; docker rm -f escopo-http' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/up > /dev/null; then break; fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:8080/up > /dev/null
+          curl --fail --silent http://127.0.0.1:8080/ > /tmp/escopo-home.html
+          grep -q 'Escopo' /tmp/escopo-home.html
+          test "$(curl --silent -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/.env)" = 404
+          test "$(curl --silent -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/internal/maintenance)" = 403

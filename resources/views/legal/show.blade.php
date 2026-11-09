@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} — Escopo Fácil</title>
-    <meta name="description" content="{{ $title }} do ambiente acadêmico Escopo Fácil.">
+    <meta name="description" content="{{ $title }} do Escopo Fácil.">
     <link rel="stylesheet" href="{{ asset('assets/landing/legal.css') . '?v=' . filemtime(public_path('assets/landing/legal.css')) }}">
 </head>
 <body class="legal-page">

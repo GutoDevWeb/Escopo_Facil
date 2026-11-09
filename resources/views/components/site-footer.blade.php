@@ -6,8 +6,12 @@
             <nav aria-label="Sua conta"><h2>Sua conta</h2><a href="{{ route('login') }}" data-login-trigger aria-haspopup="dialog" aria-controls="login-modal">Entre</a><a href="{{ route('register') }}">Crie sua conta</a><a href="{{ route('password.request') }}" data-auth-screen="forgot-password">Recuperar senha</a></nav>
             <nav aria-label="Suporte">
                 <h2>Suporte</h2>
-                <span class="footer-support-detail"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 20 1.2-4.2A8 8 0 1 1 8.2 19L4 20Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8c0 4 3 7 7 7l1-2-2-1-1 1c-1.5-.6-2.4-1.5-3-3l1-1-1-2-2 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg><span>(11) 00000-0000<small>WhatsApp demonstrativo</small></span></span>
-                <a class="footer-support-detail" href="mailto:Suporte@escopofacil.com.br"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Suporte@escopofacil.com.br</span></a>
+                @if(config('legal.whatsapp_url'))
+                <a class="footer-support-detail" href="{{ config('legal.whatsapp_url') }}" target="_blank" rel="noopener noreferrer"><x-whatsapp-icon /><span>{{ config('legal.whatsapp_label') }}</span></a>
+                @elseif(! app()->environment('production'))
+                <span class="footer-support-detail">(11) 00000-0000<small>WhatsApp demonstrativo</small></span>
+                @endif
+                <a class="footer-support-detail" href="mailto:{{ config('legal.support_email') }}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>{{ config('legal.support_email') }}</span></a>
                 <span class="footer-support-detail"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Atendimento das 8h às 18h</span></span>
                 <a href="#contato">Falar com a equipe</a>
             </nav>

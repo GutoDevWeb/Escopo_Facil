@@ -26,7 +26,7 @@ class ContactTest extends TestCase
 
     public function test_contact_uses_configured_recipients_and_reports_local_mode(): void
     {
-        config(['mail.default' => 'log', 'legal.contact_emails' => ['team@example.test']]);
+        config(['mail.default' => 'log', 'mail.contact_address' => 'team@example.test']);
         Mail::shouldReceive('raw')->once()->withArgs(function ($body, $callback) {
             $message = new \Illuminate\Mail\Message(new \Symfony\Component\Mime\Email);
             $callback($message);
@@ -39,5 +39,15 @@ class ContactTest extends TestCase
             'name' => 'Visitante', 'email' => 'visitor@example.test',
             'message' => 'Mensagem de teste', 'uses_platform' => 'no',
         ])->assertOk()->assertJsonPath('message', 'Mensagem registrada no ambiente local de testes. Nenhum e-mail externo foi enviado.');
+    }
+
+    public function test_missing_contact_destination_does_not_send(): void
+    {
+        config(['mail.contact_address' => '']);
+        Mail::shouldReceive('raw')->never();
+        $this->postJson('/contato', [
+            'name' => 'Visitante', 'email' => 'visitor@example.test',
+            'message' => 'Mensagem de teste', 'uses_platform' => 'no',
+        ])->assertStatus(503);
     }
 }
