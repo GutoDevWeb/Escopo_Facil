@@ -55,7 +55,9 @@ class ProjectActivity
     {
         return $user->notifications()->whereNull('project_seen_at')->whereNotNull('project_id')
             ->whereIn('project_id', Project::visibleTo($user)->select('projects.id'))
-            ->distinct()->pluck('project_id')->all();
+            // The notifications relation applies `latest()` by default. PostgreSQL
+            // rejects ORDER BY columns that are not part of a SELECT DISTINCT list.
+            ->reorder()->distinct()->pluck('project_id')->all();
     }
 
     public function retryMail(): void
