@@ -9,7 +9,7 @@
     header .menu { min-width: 44px; min-height: 44px; }
     .hero-copy { padding: 0 20px; }
     .hero { height: auto; min-height: 0; padding-top: 184px; padding-bottom: 0; }
-    .hero-copy { margin-bottom: 40px; }
+    .hero-copy { margin-bottom: 72px; }
     .hero > .cloud { top: 84px; width: 240px; height: 92px; }
     .hero > .cloud.left { left: -100px; }
     .hero > .cloud.right { right: -100px; }
@@ -18,8 +18,10 @@
     .dashboard-stage { height: auto; aspect-ratio: auto; margin: 0 16px; }
     .workspace { width: 100%; max-width: 100%; height: auto; aspect-ratio: auto; left: auto; }
     .workspace > img { width: 100%; height: auto; object-fit: contain; }
+    .workspace { transform-origin: center top; }
     .feature-visual { height: auto; padding: 20px; }
     .feature-visual img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; }
+    .feature-visual picture { display: block; }
     .actions { flex-wrap: wrap; justify-content: center; gap: 8px; }
     .plans .plan, .plans .plan.featured { min-height: 0; padding: 28px 24px; }
     .plans .plan .button { margin-top: 24px; min-height: 48px; }

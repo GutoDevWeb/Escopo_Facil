@@ -35,12 +35,12 @@
             $icon = $isAdmin ? url('/system') . '/assets/icon/user-key.svg' : url('/system') . '/assets/icon/user-lock.svg';
             $badgeText = $isAdmin ? 'Admin' : 'Membro';
         ?>
-        <div class="projeto-card" data-search="<?= htmlspecialchars(strtolower($projeto['titulo'] . ' ' . $projeto['descricao'] . ' ' . $badgeText), ENT_QUOTES) ?>">
+        <div class="projeto-card" data-project-id="{{ $projeto['id'] }}" data-search="<?= htmlspecialchars(strtolower($projeto['titulo'] . ' ' . $projeto['descricao'] . ' ' . $badgeText), ENT_QUOTES) ?>">
             <div class="projeto-card-top">
                 <div class="projeto-card-icon projeto-card-icon--<?= $roleClass ?>">
                     <img src="<?= $icon ?>" alt="<?= $badgeText ?>">
                 </div>
-                <span class="projeto-badge projeto-badge--<?= $roleClass ?>"><?= $badgeText ?></span>
+                <span class="projeto-role-status"><span class="projeto-badge projeto-badge--<?= $roleClass ?>"><?= $badgeText ?></span><span class="project-update-dot" data-project-update-dot @if(!$projeto['has_updates']) hidden @endif role="img" aria-label="Novas atualizações neste projeto" title="Novas atualizações neste projeto"></span></span>
             </div>
             <h2 class="projeto-card-title"><?= htmlspecialchars($projeto['titulo']) ?></h2>
             <p class="projeto-card-desc"><?= htmlspecialchars($projeto['descricao']) ?></p>

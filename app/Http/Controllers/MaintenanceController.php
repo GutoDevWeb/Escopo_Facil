@@ -15,6 +15,7 @@ class MaintenanceController extends Controller
 
         return Cache::lock('maintenance:subscriptions', 300)->get(function () {
             Artisan::call('subscriptions:expire');
+            Artisan::call('notifications:deliver');
             return response()->json(['ok' => true])->header('Cache-Control', 'no-store');
         }) ?? response()->json(['ok' => true, 'running' => true])->header('Cache-Control', 'no-store');
     }

@@ -71,7 +71,10 @@ class SystemActionController extends Controller
                 $u = User::findOrFail($request->integer('membro_id'));
                 if ($action === 'remover' && $u->id === $request->user()->id && $u->id !== $p->user_id) {
                     Gate::authorize('view', $p);
-                    $p->members()->detach($u->id);
+                    \Illuminate\Support\Facades\DB::transaction(function () use ($p, $u) {
+                        $p->members()->detach($u->id);
+                        app(\App\Services\ProjectActivity::class)->publish($p, $u, 'member_left', $u->name.' saiu do projeto "'.$p->title.'".');
+                    });
                     $response = response()->noContent();
                 } elseif ($action === 'remover') {
                     $response = $this->workspace->removeMember($request, $p, $u);

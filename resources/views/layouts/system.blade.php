@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{{ asset('system/assets/css/'.$css.'.css') }}">
 @endforeach
 @if(in_array($page, ['dashboard','projetos','tarefas','configuracao']))
-<link rel="stylesheet" href="{{ asset('system/assets/css/pages/'.$page.'.css') }}">
+<link rel="stylesheet" href="{{ asset('system/assets/css/pages/'.$page.'.css') }}?v={{ filemtime(public_path('system/assets/css/pages/'.$page.'.css')) }}">
 @endif
 <link rel="stylesheet" href="{{ asset('system/assets/css/integration.css') }}">
 <link rel="stylesheet" href="{{ asset('system/assets/css/theme.css') }}?v={{ filemtime(public_path('system/assets/css/theme.css')) }}">
@@ -111,7 +111,7 @@
 <script src="{{ asset('system/assets/js/'.$js.'.js') }}"></script>
 @endforeach
 @if(in_array($page, ['projetos','configuracao']) || ($page === 'tarefas' && isset($projetoId)))
-<script src="{{ asset('system/assets/js/pages/'.$page.'.js') }}"></script>
+<script src="{{ asset('system/assets/js/pages/'.$page.'.js') }}?v={{ filemtime(public_path('system/assets/js/pages/'.$page.'.js')) }}"></script>
 @endif
 @if($page === 'dashboard')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.js"></script>

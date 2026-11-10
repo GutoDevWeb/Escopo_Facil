@@ -47,10 +47,12 @@ class SystemController extends Controller
 
     public function projects(Request $request)
     {
-        $projetos = Project::visibleTo($request->user())->with(['owner', 'members'])->latest('id')->get()->map(function ($p) use ($request) {
-            $members = collect([$this->person($p->owner) + ['role' => 'admin', 'role_label' => 'Proprietário']])->merge($p->members->map(fn ($u) => $this->person($u) + ['role' => $u->pivot->role === 'manager' ? 'admin' : 'membro', 'role_label' => ['manager' => 'Gestor', 'viewer' => 'Leitor', 'member' => 'Membro'][$u->pivot->role] ?? 'Membro']));
+        $unreadProjects = app(\App\Services\ProjectActivity::class)->unreadProjects($request->user());
+        $projetos = Project::visibleTo($request->user())->with(['owner', 'members'])->latest('id')->get()->map(function ($p) use ($request, $unreadProjects) {
+            $members = collect([array_replace($this->person($p->owner), ['role' => 'admin', 'role_label' => 'Proprietário'])])->merge($p->members->map(fn ($u) => array_replace($this->person($u), ['role' => $u->pivot->role === 'manager' ? 'admin' : 'membro', 'role_label' => ['manager' => 'Admin', 'viewer' => 'Leitor', 'member' => 'Membro'][$u->pivot->role] ?? 'Membro'])));
             return ['id' => $p->id, 'titulo' => $p->title, 'descricao' => $p->description ?? '',
                 'role' => Gate::allows('update', $p) ? 'admin' : 'membro', 'criado_por' => $p->owner->name,
+                'has_updates' => in_array($p->id, $unreadProjects), 'can_delete' => Gate::allows('delete', $p),
                 'owner_id' => $p->user_id, 'can_roles' => $this->access->allows($p->owner, 'roles') && $p->user_id === $request->user()->id,
                 'data_criacao' => $p->created_at->format('d/m/Y'), 'membros' => $members->values()->all(),
                 'membros_extra' => max(0, $members->count() - 4)];
@@ -61,6 +63,7 @@ class SystemController extends Controller
     public function tasks(Request $request, Project $project)
     {
         Gate::authorize('view', $project);
+        app(\App\Services\ProjectActivity::class)->markProjectSeen($request->user(), $project);
         $tarefas = $project->tasks()->with('checklistItems')->latest('id')->get()->map(function ($t) {
             $creator = User::find($t->user_id);
             return ['id' => $t->id, 'titulo' => $t->title, 'descricao' => $t->description ?? '',

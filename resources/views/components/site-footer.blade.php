@@ -39,7 +39,7 @@
         </div>
         <p class="site-footer-description site-footer-description--desktop">Organização simples para projetos, tarefas e equipes. Desenvolvido no Centro Universitário Senac, no curso de Tecnologia em Sistemas para Internet. Ambiente acadêmico de simulação, sem cobranças reais. Consulte os <a href="{{ route('legal.terms') }}" data-legal-document>Termos de Uso</a> e o <a href="{{ route('legal.privacy') }}" data-legal-document>Aviso de Privacidade</a>.</p>
         <p class="site-footer-description site-footer-description--mobile">Organize projetos, tarefas e equipes. Projeto acadêmico do Centro Universitário Senac, sem cobranças reais.</p>
-        <p class="site-footer-credit">Criado por Natan Oliveira, Guilherme Augusto e Nicollas.</p>
+        <p class="site-footer-credit">Criado por Natan Oliveira, Guilherme Augusto e Nicollas Ramos.</p>
         <div class="footer-socials" role="group" aria-label="Redes sociais — demonstração, sem links">
             <span role="img" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.1"/></svg></span>
             <span role="img" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 22v-9h3l.5-4H14V6.8c0-1.1.4-1.8 1.9-1.8H18V1.4a25 25 0 0 0-3-.2c-3 0-5 1.8-5 5.1V9H7v4h3v9h4Z"/></svg></span>

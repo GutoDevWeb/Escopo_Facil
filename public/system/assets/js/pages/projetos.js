@@ -67,6 +67,46 @@ document.addEventListener('DOMContentLoaded', function () {
     const templateMembro = document.getElementById('template-membro-card');
     const baseUrl = document.body.dataset.baseUrl || '';
     var gerenciarProjetoIndex = null;
+    const deleteButton = document.getElementById('gerenciar-excluir-btn');
+    const deleteDialog = document.getElementById('project-delete-dialog');
+    const deleteConfirm = document.getElementById('project-delete-confirm');
+    const deleteError = document.getElementById('project-delete-error');
+    let deleting = false;
+
+    deleteButton.addEventListener('click', function () {
+        const projeto = window.projetosMock[gerenciarProjetoIndex];
+        if (!projeto?.can_delete) return;
+        document.getElementById('project-delete-name').textContent = projeto.titulo;
+        deleteError.textContent = '';
+        deleteDialog.showModal();
+    });
+    document.getElementById('project-delete-cancel').addEventListener('click', () => deleteDialog.close());
+    deleteDialog.addEventListener('cancel', e => { if (deleting) e.preventDefault(); });
+    deleteConfirm.addEventListener('click', async function () {
+        if (deleting) return;
+        const projeto = window.projetosMock[gerenciarProjetoIndex];
+        if (!projeto?.can_delete) return;
+        deleting = true; deleteConfirm.disabled = true;
+        document.getElementById('project-delete-cancel').disabled = true;
+        deleteError.textContent = '';
+        try {
+            const data = new FormData(); data.append('projeto_id', projeto.id);
+            await systemFetch(baseUrl + '/actions/projetos/excluir.php', { method: 'POST', body: data });
+            window.location.reload();
+        } catch {
+            deleteError.textContent = 'Não foi possível excluir o projeto. Confira sua conexão e permissão e tente novamente.';
+        } finally {
+            deleting = false; deleteConfirm.disabled = false;
+            document.getElementById('project-delete-cancel').disabled = false;
+        }
+    });
+
+    window.addEventListener('project-updates', function (event) {
+        const ids = new Set(event.detail.map(String));
+        document.querySelectorAll('[data-project-id]').forEach(card => {
+            card.querySelector('[data-project-update-dot]').hidden = !ids.has(card.dataset.projectId);
+        });
+    });
 
     function renderMembrosGrid(projeto) {
         membrosGrid.innerHTML = '';
@@ -160,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('gerenciar-data-criacao').value = projeto.data_criacao;
 
         gerenciarProjetoIndex = index;
+        deleteButton.hidden = !projeto.can_delete;
         renderMembrosGrid(projeto);
         modalGerenciar.classList.add('active');
     }

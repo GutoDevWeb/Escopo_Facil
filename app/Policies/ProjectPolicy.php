@@ -29,5 +29,5 @@ class ProjectPolicy
         // A viewer never gains write access when the project loses a paid tier.
         return $member && in_array($member->pivot->role, ['member', 'manager'], true);
     }
-    public function delete(User $user, Project $project): bool { return $project->user_id === $user->id; }
+    public function delete(User $user, Project $project): bool { return $this->manageMembers($user, $project); }
 }

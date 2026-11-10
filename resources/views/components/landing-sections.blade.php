@@ -18,7 +18,10 @@
             <a class="button" data-login-trigger aria-haspopup="dialog" aria-controls="login-modal" href="{{ route('login') }}">Organizar tarefas</a>
             <ul class="feature-tags"><li><span aria-hidden="true">⚑</span> Prioridades</li><li><span aria-hidden="true">◷</span> Prazos</li><li><span aria-hidden="true">↗</span> Andamento</li><li><span aria-hidden="true">☷</span> Tarefas</li></ul>
         </div>
-        <div class="feature-visual"><img src="{{ asset('assets/landing/feature-tasks.png') }}" alt="Quadro de tarefas com prioridades, prazos e status de andamento" width="1440" height="1024" loading="lazy"></div>
+        <div class="feature-visual"><picture>
+            <source media="(max-width: 809px)" srcset="{{ asset('assets/landing/dashboard.jpg') }}" width="1425" height="1024">
+            <img src="{{ asset('assets/landing/feature-tasks.png') }}" alt="Quadro de tarefas com prioridades, prazos e status de andamento" width="1440" height="1024" loading="lazy">
+        </picture></div>
     </div>
 </section>
 <section class="resources-section section" id="beneficios" aria-labelledby="resources-title">

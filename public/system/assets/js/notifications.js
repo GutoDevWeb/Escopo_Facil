@@ -15,6 +15,10 @@
         toggle.setAttribute('aria-label', value ? `Notificações, ${value} não visualizadas` : 'Notificações');
         status.textContent = value ? `${value} não ${value === 1 ? 'visualizada' : 'visualizadas'}` : 'Você está em dia';
     }
+    function receive(data) {
+        count(data.unread_count);
+        window.dispatchEvent(new CustomEvent('project-updates', { detail: data.project_updates || [] }));
+    }
     function position() {
         const rect = toggle.getBoundingClientRect();
         const viewport = window.visualViewport;
@@ -73,7 +77,7 @@
         try {
             const data = await (await systemFetch(panel.dataset.notificationsUrl)).json();
             if (current !== generation || panel.hidden) return;
-            count(data.unread_count); observer.disconnect();
+            receive(data); observer.disconnect();
             if (!data.items.length) {
                 const empty = document.createElement('p'); empty.className = 'system-notifications-empty';
                 empty.textContent = 'Nenhuma notificação por aqui ainda.'; list.append(empty);
@@ -98,11 +102,14 @@
     window.visualViewport?.addEventListener('resize', () => { if (!panel.hidden) position(); });
     window.visualViewport?.addEventListener('scroll', () => { if (!panel.hidden) position(); });
     document.querySelector('.main')?.addEventListener('scroll', () => { if (!panel.hidden) position(); }, { passive: true });
-    setInterval(async () => {
+    async function refresh() {
         if (document.hidden || !panel.hidden) return;
         try {
             const response = await fetch(panel.dataset.notificationsUrl, { credentials: 'same-origin', headers: { Accept: 'application/json' } });
-            if (response.ok) count((await response.json()).unread_count);
+            if (response.ok) receive(await response.json());
         } catch { /* Keep the last known count when offline. */ }
-    }, 60000);
+    }
+    refresh();
+    setInterval(refresh, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 })();

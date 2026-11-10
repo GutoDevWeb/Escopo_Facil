@@ -106,6 +106,10 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const element = dashboardRef.current.querySelector('.workspace');
         if (reduced) { element.style.removeProperty('transform'); return; }
         const p = Math.max(0, Math.min(1, value));
+        if (compact) {
+            element.style.transform = `scale(${.92 + .08 * p})`;
+            return;
+        }
         const scale = .8 + .2 * p;
         element.style.transform = `perspective(1000px) translateY(${-80 * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
     }
@@ -133,7 +137,7 @@ function LandingMotion({ host, mobileImage, webImage }) {
 
     useEffect(() => {
         paintDashboard(dashboardPosition.get());
-    }, [reduced]);
+    }, [reduced, compact]);
 
     const transition = reduced ? { duration: 0 } : slideSpring;
     return <>

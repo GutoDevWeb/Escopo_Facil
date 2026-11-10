@@ -1,4 +1,27 @@
 /* A área principal cuida da rolagem; o documento não deve criar uma segunda barra. */
+html[data-theme="dark"] .sugestao-nome { color: #fff; }
+.sugestao-nome { color: var(--color-text-strong, #202534); }
+.projeto-role-status { display: inline-flex; align-items: center; gap: 8px; }
+.project-update-dot { display: inline-block; width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #ef4444; animation: project-update-pulse 1.6s ease-in-out infinite; }
+.project-update-dot[hidden], .project-delete-button[hidden] { display: none; }
+@keyframes project-update-pulse { 50% { opacity: .45; box-shadow: 0 0 0 4px rgb(239 68 68 / 16%); } }
+@media (prefers-reduced-motion: reduce) { .project-update-dot { animation: none; } }
+.project-save-actions, .project-delete-dialog-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+#form-gerenciar-projeto .modal-lateral-actions { gap: 12px; flex-wrap: wrap; }
+.project-save-actions { margin-left: auto; }
+.project-delete-button { padding: 12px 16px; border: 1px solid #c65d70; border-radius: 8px; background: #f9e9ed; color: #982f47; font: inherit; font-weight: 600; cursor: pointer; }
+.project-delete-button:hover { background: #f2d3dc; }
+html[data-theme="dark"] .project-delete-button { background: #472631; color: #ffbccb; border-color: #bd6177; }
+html[data-theme="dark"] .project-delete-button:hover { background: #60303f; }
+.project-delete-button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.project-delete-button:disabled { opacity: .6; cursor: wait; }
+.project-delete-dialog { width: min(500px, calc(100% - 32px)); box-sizing: border-box; max-height: calc(100dvh - 32px); overflow: auto; margin: auto; padding: 28px; border: 1px solid var(--theme-border, #d8c3cc); border-radius: 16px; background: var(--theme-panel, #fff); color: var(--color-text-strong, #202534); }
+.project-delete-dialog::backdrop { background: rgb(0 0 0 / 70%); }
+.project-delete-dialog h2 { margin: 0 0 16px; font-size: 24px; }
+.project-delete-dialog p { line-height: 1.65; margin: 0 0 20px; overflow-wrap: anywhere; }
+#project-delete-error { color: var(--theme-danger-text, #982f47); }
+@media (max-width: 480px) { .project-save-actions, .project-delete-dialog-actions { flex-wrap: wrap; } .project-delete-dialog { padding: 22px; } }
+
 html.system-app, html.system-app body {
     height: 100%;
     overflow: hidden;

@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\PlanAccess;
+use App\Services\ProjectActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 
 class WorkspaceController extends Controller
 {
-    public function __construct(private PlanAccess $access) {}
+    public function __construct(private PlanAccess $access, private ProjectActivity $activity) {}
 
     public function entitlements(Request $request)
     {
@@ -59,6 +60,7 @@ class WorkspaceController extends Controller
     {
         if (!$request->expectsJson()) return app(SystemController::class)->tasks($request, $project);
         Gate::authorize('view', $project);
+        $this->activity->markProjectSeen($request->user(), $project);
         $project->load(['members' => fn ($q) => $q->select('users.id', 'users.name', 'users.email')]);
         $project->loadCount('tasks');
         return $request->expectsJson() ? response()->json($project) : view('workspace.show', [
@@ -73,14 +75,23 @@ class WorkspaceController extends Controller
         $data = $request->validate(['title' => ['sometimes', 'required', 'string', 'max:200'],
             'description' => ['sometimes', 'nullable', 'string', 'max:10000'], 'archived' => ['sometimes', 'boolean']]);
         $this->access->require($project->owner, 'projects');
-        $project->update($data);
+        DB::transaction(function () use ($project, $request, $data) {
+            $before = $project->title;
+            $project->update($data);
+            if ($project->wasChanged(['title', 'description', 'archived'])) {
+                $this->activity->publish($project, $request->user(), 'project_updated', $request->user()->name.' atualizou os dados do projeto "'.$before.'"'.($before !== $project->title ? ', agora chamado "'.$project->title.'"' : '').'.');
+            }
+        });
         return $request->expectsJson() ? response()->json($project) : redirect()->route('projects.show', $project);
     }
 
     public function destroy(Request $request, Project $project)
     {
         Gate::authorize('delete', $project);
-        $project->delete();
+        DB::transaction(function () use ($project, $request) {
+            $this->activity->publish($project, $request->user(), 'project_deleted', $request->user()->name.' excluiu o projeto "'.$project->title.'" e suas tarefas.');
+            $project->delete();
+        });
         return $request->expectsJson() ? response()->noContent() : redirect()->route('projects.index');
     }
 
@@ -137,6 +148,8 @@ class WorkspaceController extends Controller
             $task->user_id = $request->user()->id;
             $task->save();
             $this->event($project, $task, $request, 'created', $task->only(['title', 'status', 'priority', 'due_date']));
+            $this->activity->publish($project, $request->user(), 'task_created', $request->user()->name.' criou a tarefa "'.$task->title.'" no projeto "'.$project->title.'".');
+            app(\App\Services\TaskDeadlineNotifications::class)->send(null, $project);
             return $task;
         });
         return $request->expectsJson() ? response()->json($task, 201) : redirect()->route('projects.show', $project);
@@ -151,6 +164,12 @@ class WorkspaceController extends Controller
             $before = $task->only(array_keys($data));
             $task->update($data);
             $this->event($project, $task, $request, 'updated', ['before' => $before, 'after' => $data]);
+            if ($task->wasChanged(['title', 'description', 'status', 'priority', 'due_date'])) {
+                $status = ['todo' => 'A fazer', 'doing' => 'Em andamento', 'done' => 'Concluído'][$task->status];
+                $detail = $task->wasChanged('status') ? ' moveu a tarefa "'.$task->title.'" para "'.$status.'"' : ' atualizou a tarefa "'.$task->title.'"';
+                $this->activity->publish($project, $request->user(), 'task_updated', $request->user()->name.$detail.' no projeto "'.$project->title.'".');
+                app(\App\Services\TaskDeadlineNotifications::class)->send(null, $project);
+            }
         });
         return $request->expectsJson() ? response()->json($task) : redirect()->route('projects.show', $project);
     }
@@ -161,6 +180,7 @@ class WorkspaceController extends Controller
         $this->writable($project);
         DB::transaction(function () use ($request, $project, $task) {
             $this->event($project, null, $request, 'deleted', ['task_id' => $task->id, 'title' => $task->title]);
+            $this->activity->publish($project, $request->user(), 'task_deleted', $request->user()->name.' excluiu a tarefa "'.$task->title.'" do projeto "'.$project->title.'".');
             $task->delete();
         });
         return $request->expectsJson() ? response()->noContent() : redirect()->route('projects.show', $project);
@@ -175,7 +195,7 @@ class WorkspaceController extends Controller
         abort_if($role === 'manager' && $project->user_id !== $request->user()->id, 403);
         $member = User::where('email', mb_strtolower(trim($data['email'])))->whereNotNull('email_verified_at')->first();
         if (! $member) throw ValidationException::withMessages(['email' => 'Informe uma conta cadastrada com e-mail confirmado.']);
-        DB::transaction(function () use ($project, $member, $role) {
+        DB::transaction(function () use ($request, $project, $member, $role) {
             $owner = User::lockForUpdate()->findOrFail($project->user_id);
             $this->access->require($owner, 'members');
             if ($member->id === $owner->id || $project->members()->where('users.id', $member->id)->exists()) {
@@ -186,6 +206,10 @@ class WorkspaceController extends Controller
                 throw ValidationException::withMessages(['plan' => 'Limite de membros do plano atingido (incluindo o proprietário).']);
             }
             $project->members()->attach($member->id, ['role' => $role]);
+            $this->activity->publish($project, $request->user(), 'member_added',
+                $request->user()->name.' adicionou '.$member->name.' ao projeto "'.$project->title.'".', $member,
+                $request->user()->name.' convidou você para participar do projeto "'.$project->title.'". Seu acesso já está disponível.', true);
+            app(\App\Services\TaskDeadlineNotifications::class)->send($member, $project);
         });
         return $request->expectsJson() ? response()->json(['message' => 'Membro adicionado.'], 201) : redirect()->route('projects.show', $project);
     }
@@ -199,7 +223,13 @@ class WorkspaceController extends Controller
         // Managers can manage members, but only the owner appoints/removes managers.
         $previous = $project->members()->where('users.id', $member->id)->first()->pivot->role;
         abort_if($project->user_id !== $request->user()->id && ($data['role'] === 'manager' || $previous === 'manager'), 403);
-        $project->members()->updateExistingPivot($member->id, $data);
+        DB::transaction(function () use ($project, $member, $data, $previous, $request) {
+            $project->members()->updateExistingPivot($member->id, $data);
+            if ($previous === $data['role']) return;
+            $label = ['manager' => 'Admin', 'member' => 'Membro', 'viewer' => 'Leitor'][$data['role']];
+            $this->activity->publish($project, $request->user(), 'member_role', $request->user()->name.' alterou a permissão de '.$member->name.' para '.$label.' no projeto "'.$project->title.'".', $member,
+                $request->user()->name.' alterou sua permissão para '.$label.' no projeto "'.$project->title.'".');
+        });
         return $request->expectsJson() ? response()->json(['message' => 'Permissão atualizada.']) : redirect()->route('projects.show', $project);
     }
 
@@ -209,7 +239,11 @@ class WorkspaceController extends Controller
         $existing = $project->members()->where('users.id', $member->id)->first();
         abort_unless($existing && $member->id !== $project->user_id, 404);
         abort_if($project->user_id !== $request->user()->id && $existing->pivot->role === 'manager', 403);
-        $project->members()->detach($member->id);
+        DB::transaction(function () use ($project, $request, $member) {
+            $project->members()->detach($member->id);
+            $this->activity->publish($project, $request->user(), 'member_removed', $request->user()->name.' removeu '.$member->name.' do projeto "'.$project->title.'".', $member,
+                $request->user()->name.' removeu você do projeto "'.$project->title.'". Você não tem mais acesso a esse projeto.');
+        });
         return $request->expectsJson() ? response()->noContent() : redirect()->route('projects.show', $project);
     }
 
@@ -218,7 +252,11 @@ class WorkspaceController extends Controller
         $this->belongs($project, $task);
         $this->writable($project);
         $data = $request->validate(['title' => ['required', 'string', 'max:255']]);
-        $item = $task->checklistItems()->create($data);
+        $item = DB::transaction(function () use ($task, $data, $project, $request) {
+            $item = $task->checklistItems()->create($data);
+            $this->checklistActivity($request, $project, $task, 'adicionou', $item->title);
+            return $item;
+        });
         return $request->expectsJson() ? response()->json($item, 201) : redirect()->route('projects.show', $project);
     }
 
@@ -227,7 +265,12 @@ class WorkspaceController extends Controller
         $this->belongs($project, $task);
         $this->writable($project);
         abort_unless($item->task_id === $task->id, 404);
-        $item->update($request->validate(['title' => ['sometimes', 'required', 'string', 'max:255'], 'completed' => ['sometimes', 'boolean']]));
+        $data = $request->validate(['title' => ['sometimes', 'required', 'string', 'max:255'], 'completed' => ['sometimes', 'boolean']]);
+        DB::transaction(function () use ($item, $data, $request, $project, $task) {
+            $item->update($data);
+            if ($item->wasChanged(['title', 'completed'])) $this->checklistActivity($request, $project, $task,
+                $item->wasChanged('completed') ? ($item->completed ? 'concluiu' : 'reabriu') : 'atualizou', $item->title);
+        });
         return $request->expectsJson() ? response()->json($item) : redirect()->route('projects.show', $project);
     }
 
@@ -236,8 +279,16 @@ class WorkspaceController extends Controller
         $this->belongs($project, $task);
         $this->writable($project);
         abort_unless($item->task_id === $task->id, 404);
-        $item->delete();
+        DB::transaction(function () use ($item, $request, $project, $task) {
+            $this->checklistActivity($request, $project, $task, 'excluiu', $item->title);
+            $item->delete();
+        });
         return $request->expectsJson() ? response()->noContent() : redirect()->route('projects.show', $project);
+    }
+
+    private function checklistActivity(Request $request, Project $project, Task $task, string $verb, string $title): void
+    {
+        $this->activity->publish($project, $request->user(), 'checklist_updated', $request->user()->name.' '.$verb.' o item "'.$title.'" da tarefa "'.$task->title.'" no projeto "'.$project->title.'".');
     }
 
     public function report(Request $request, Project $project)

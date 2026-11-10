@@ -130,7 +130,7 @@ class PlanAuthorizationTest extends TestCase
         $this->actingAs($manager)->postJson(route('projects.members.store',$project),['email'=>$candidate->email,'role'=>'manager'])->assertForbidden();
         $this->postJson(route('projects.members.store',$project),['email'=>$candidate->email])->assertCreated();
         $this->patchJson(route('projects.members.update',[$project,$candidate]),['role'=>'manager'])->assertForbidden();
-        $this->deleteJson(route('projects.destroy',$project))->assertForbidden();
+        $this->deleteJson(route('projects.destroy',$project))->assertNoContent();
     }
 
     public function test_pro_cannot_assign_advanced_roles_and_removed_member_loses_access(): void

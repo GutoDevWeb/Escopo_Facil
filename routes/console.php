@@ -24,3 +24,11 @@ Artisan::command('subscriptions:expire', function () {
 })->purpose('Atualiza o histórico de assinaturas vencidas; a autorização verifica a data em cada requisição.');
 
 \Illuminate\Support\Facades\Schedule::command('subscriptions:expire')->hourly();
+
+Artisan::command('notifications:deliver', function () {
+    app(\App\Services\TaskDeadlineNotifications::class)->send();
+    app(\App\Services\ProjectActivity::class)->retryMail();
+    $this->info('Alertas de prazo verificados e e-mails pendentes processados.');
+})->purpose('Envia alertas nas 24 horas anteriores ao prazo e tenta novamente e-mails pendentes.');
+
+\Illuminate\Support\Facades\Schedule::command('notifications:deliver')->hourly()->withoutOverlapping();

@@ -60,7 +60,7 @@ class AdminDashboardTest extends TestCase
 
     public function test_development_admin_command_is_idempotent_and_disabled_in_production(): void
     {
-        config(['development.admin_password' => 'Dev-test-password!2026']);
+        config(['development.admin_email' => 'admin@escopofacil.test', 'development.admin_password' => 'Dev-test-password!2026']);
         $this->artisan('dev:create-admin')->assertSuccessful();
         $admin = User::where('email', 'admin@escopofacil.test')->firstOrFail();
         $hash = $admin->password; $this->assertTrue($admin->is_admin); $this->assertTrue($admin->hasVerifiedEmail());

@@ -68,12 +68,25 @@
 
             <!-- Ações -->
             <div class="modal-lateral-actions">
-                <button type="button" class="modal-btn-cancelar" id="gerenciar-cancelar-btn">Cancelar</button>
-                <button type="submit" class="modal-btn-salvar">Salvar alterações</button>
+                <button type="button" class="project-delete-button" id="gerenciar-excluir-btn" hidden>Excluir projeto</button>
+                <div class="project-save-actions">
+                    <button type="button" class="modal-btn-cancelar" id="gerenciar-cancelar-btn">Cancelar</button>
+                    <button type="submit" class="modal-btn-salvar">Salvar alterações</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
+
+<dialog class="project-delete-dialog" id="project-delete-dialog" aria-labelledby="project-delete-title" aria-describedby="project-delete-description">
+    <h2 id="project-delete-title">Excluir projeto?</h2>
+    <p id="project-delete-description">Ao excluir <strong id="project-delete-name"></strong>, todas as tarefas, checklists e o histórico serão apagados para todos os participantes. Esta ação não pode ser desfeita. Deseja continuar?</p>
+    <p id="project-delete-error" role="alert"></p>
+    <div class="project-delete-dialog-actions">
+        <button type="button" class="modal-btn-cancelar" id="project-delete-cancel" autofocus>Manter projeto</button>
+        <button type="button" class="project-delete-button" id="project-delete-confirm">Sim, excluir projeto</button>
+    </div>
+</dialog>
 
 <!-- Template de card de membro (hidden, clonado via JS) -->
 <template id="template-membro-card">

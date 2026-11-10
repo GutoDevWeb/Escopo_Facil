@@ -9,7 +9,9 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        app(\App\Services\TaskDeadlineNotifications::class)->send($user);
         return response()->json([
+            'project_updates' => app(\App\Services\ProjectActivity::class)->unreadProjects($user),
             'unread_count' => $user->unreadNotifications()->count(),
             'items' => $user->notifications()->latest()->limit(30)->get()->map(fn ($n) => [
                 'id' => $n->id, 'title' => $n->data['title'] ?? 'Notificação', 'body' => $n->data['body'] ?? '',
