@@ -15,6 +15,8 @@ O botão aparece no rodapé do site e no card **Baixe nosso app**, na página **
 
 A instalação depende do navegador, do dispositivo, de HTTPS na hospedagem e da decisão do usuário. Não é um download de APK nem uma publicação em loja. O sistema precisa de internet: esta implementação não adiciona cache offline de telas autenticadas nem de dados de projetos.
 
+O painel de notificações fica limitado à área visível da tela, inclusive após redimensionamento. No atalho instalado, o layout reserva espaço para a área segura inferior e a cor das barras acompanha o tema do sistema. As barras de status e navegação pertencem ao dispositivo e não são removidas pelo site. Atalhos existentes podem demorar para atualizar as cores do manifesto; reabrir ou reinstalar o atalho pode ser necessário após a publicação.
+
 ## Validação
 
 ```sh

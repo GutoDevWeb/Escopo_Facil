@@ -44,7 +44,9 @@
             <p>Voce nao tem acesso as tarefas deste projeto.</p>
         </div>
     <?php else: ?>
-        @include('system.plan-overview', ['projectAccess' => $access])
+        @if(app(\App\Services\PlanAccess::class)->plan(auth()->user())?->slug === 'free')
+            @include('system.plan-overview', ['projectAccess' => $access, 'dismissible' => true])
+        @endif
         <nav class="system-project-links">
             @if(in_array('reports', $access['features']))<a href="{{ route('projects.report', $project) }}">Relatório do projeto</a>@else<span class="feature-locked-link" title="Disponível a partir do Pro">@include('system.lock-icon') Relatório do projeto · Pro</span>@endif
             @if(in_array('history', $access['features']))<a href="{{ route('projects.history', $project) }}">Histórico de tarefas</a>@else<span class="feature-locked-link" title="Disponível no Equipe">@include('system.lock-icon') Histórico de tarefas · Equipe</span>@endif

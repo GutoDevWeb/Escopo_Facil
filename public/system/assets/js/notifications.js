@@ -17,9 +17,20 @@
     }
     function position() {
         const rect = toggle.getBoundingClientRect();
-        panel.style.top = `${Math.min(rect.bottom + 10, innerHeight - 120)}px`;
-        panel.style.right = `${Math.max(16, innerWidth - rect.right)}px`;
-        panel.style.maxHeight = `${Math.max(100, innerHeight - rect.bottom - 26)}px`;
+        const viewport = window.visualViewport;
+        const leftEdge = viewport?.offsetLeft || 0;
+        const topEdge = viewport?.offsetTop || 0;
+        const width = viewport?.width || innerWidth;
+        const height = viewport?.height || innerHeight;
+        const margin = 12;
+        panel.style.width = `${Math.max(0, Math.min(380, width - margin * 2))}px`;
+        const panelWidth = panel.getBoundingClientRect().width;
+        const left = Math.max(leftEdge + margin, Math.min(rect.right - panelWidth, leftEdge + width - panelWidth - margin));
+        const top = Math.max(topEdge + margin, Math.min(rect.bottom + 10, topEdge + height - 120));
+        panel.style.left = `${left}px`;
+        panel.style.right = 'auto';
+        panel.style.top = `${top}px`;
+        panel.style.maxHeight = `calc(${Math.max(0, topEdge + height - top - margin)}px - env(safe-area-inset-bottom, 0px))`;
     }
     async function markViewed() {
         if (marking || panel.hidden || !queued.size) return;
@@ -84,6 +95,8 @@
     document.addEventListener('click', e => { if (!panel.hidden && !panel.contains(e.target) && !toggle.contains(e.target)) close(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { e.preventDefault(); close(true); } });
     window.addEventListener('resize', () => { if (!panel.hidden) position(); });
+    window.visualViewport?.addEventListener('resize', () => { if (!panel.hidden) position(); });
+    window.visualViewport?.addEventListener('scroll', () => { if (!panel.hidden) position(); });
     document.querySelector('.main')?.addEventListener('scroll', () => { if (!panel.hidden) position(); }, { passive: true });
     setInterval(async () => {
         if (document.hidden || !panel.hidden) return;

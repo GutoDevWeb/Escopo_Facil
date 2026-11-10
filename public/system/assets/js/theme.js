@@ -34,6 +34,9 @@
     function apply(theme) {
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
+        document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
+            meta.setAttribute('content', theme === 'dark' ? '#1c1f2b' : '#ffffff');
+        });
         updateCharts(theme);
         document.querySelectorAll('[data-theme-toggle]').forEach(button => {
             button.setAttribute('aria-checked', String(theme === 'dark'));

@@ -53,6 +53,12 @@ html:not([data-theme="dark"]) .sidebar {
     box-shadow: 0 3px 16px rgb(25 30 45 / 6%);
 }
 
+.plan-overview--dismissible { position: relative; }
+.plan-overview--dismissible .plan-overview-heading { padding-right: 36px; }
+.plan-overview .plan-overview-dismiss { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--theme-muted, #697386); cursor: pointer; }
+.plan-overview .plan-overview-dismiss:hover { background: var(--theme-hover, #f0edf0); }
+.plan-overview .plan-overview-dismiss:focus-visible { outline: 2px solid var(--theme-accent, #8b0836); outline-offset: 2px; }
+
 .system-theme-switch {
     position: relative;
     display: block;

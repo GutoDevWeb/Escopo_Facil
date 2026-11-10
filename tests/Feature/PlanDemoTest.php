@@ -33,7 +33,13 @@ class PlanDemoTest extends TestCase
             $this->actingAs($u)->get('/dashboard')->assertOk()->assertDontSee('plan-feature-grid', false);
             $this->get('/profile')->assertOk()->assertSee('plan-feature-grid', false);
             $this->getJson('/account/entitlements')->assertOk()->assertJsonPath('slug', $tier);
-            $this->get(route('projects.show', $p))->assertOk()->assertSee('RECURSOS DESTE PROJETO');
+            $response = $this->get(route('projects.show', $p))->assertOk();
+            if ($tier === 'free') {
+                $response->assertSee('RECURSOS DESTE PROJETO')->assertSee('data-dismiss-plan-overview', false);
+            } else {
+                $response->assertDontSee('RECURSOS DESTE PROJETO');
+            }
+            $this->get('/profile')->assertOk()->assertSee('SEU PLANO');
             $payload = ['priority' => 'high', 'due_date' => today()->addWeek()->toDateString()];
             $this->patchJson(route('projects.tasks.update', [$p, $task]), $payload)->assertStatus($tier === 'free' ? 403 : 200);
             $this->getJson(route('projects.report', $p))->assertStatus($tier === 'free' ? 403 : 200);

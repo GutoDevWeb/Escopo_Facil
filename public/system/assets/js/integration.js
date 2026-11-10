@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-dismiss-plan-overview]').forEach(button => {
+        button.addEventListener('click', () => {
+            button.closest('.plan-overview').hidden = true;
+            document.querySelector('.search-input-wrapper input')?.focus({ preventScroll: true });
+        });
+    });
     const features = JSON.parse(document.body.dataset.features || '[]');
     const lock = (selectors) => document.querySelectorAll(selectors).forEach(el => {
         el.hidden = true;

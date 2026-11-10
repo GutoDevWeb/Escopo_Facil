@@ -23,9 +23,10 @@ function ScrollClouds({ selector, offset }) {
         // Each cloud exits through its own edge and retraces its path on scroll up.
         // Percentages keep the travel proportional to its responsive image size.
         const progress = reduced ? 0 : Math.max(0, Math.min(1, value / .75));
+        const travel = window.matchMedia('(max-width: 809px)').matches ? 45 : 110;
         section.current.querySelectorAll(':scope > .cloud').forEach(cloud => {
             const direction = cloud.classList.contains('left') ? -1 : 1;
-            cloud.style.transform = `translate3d(${direction * progress * 110}%, ${-16 * progress}px, 0)`;
+            cloud.style.transform = `translate3d(${direction * progress * travel}%, ${-16 * progress}px, 0)`;
         });
     }
 
@@ -58,7 +59,7 @@ function HeroWords({ lines, delay = 0 }) {
 function SectionReveals() {
     const reduced = useSiteReducedMotion();
     useEffect(() => {
-        const elements = [...document.querySelectorAll('.feature-row, .resources-section > .eyebrow, .resources-section > h2, .resource-card, .resource-highlights > article, .benefits > .eyebrow, .benefits > h2, .mobile-scene, .pricing > .eyebrow, .pricing > h2, .plans > .plan, .contact-section > .eyebrow, .contact-section > h2, .contact-description, .contact-form, .contact-support-copy, .contact-support-visual, .site-footer-inner')];
+        const elements = [...document.querySelectorAll('.feature-visual, .feature-copy, .resources-section > .eyebrow, .resources-section > h2, .resource-card, .resource-highlights > article, .benefits > .eyebrow, .benefits > h2, .mobile-scene, .pricing > .eyebrow, .pricing > h2, .plans > .plan, .contact-section > .eyebrow, .contact-section > h2, .contact-description, .contact-form, .contact-support-copy, .contact-support-visual, .site-footer-inner')];
         if (reduced) return;
         const revealFocus = event => event.currentTarget.classList.add('is-visible');
         const observer = new IntersectionObserver(entries => entries.forEach(entry => {
@@ -86,7 +87,6 @@ function SectionReveals() {
 function LandingMotion({ host, mobileImage, webImage }) {
     const reduced = useSiteReducedMotion();
     const [device, setDevice] = useState('mobile');
-    const [mobile, setMobile] = useState(window.innerWidth <= 760);
     const dashboardRef = useRef(document.querySelector('.dashboard-stage'));
     const deviceRef = useRef(host);
     const { scrollY } = useScroll();
@@ -103,8 +103,8 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const element = dashboardRef.current.querySelector('.workspace');
         if (reduced) { element.style.removeProperty('transform'); return; }
         const p = Math.max(0, Math.min(1, value));
-        const scale = mobile ? 1 : .8 + .2 * p;
-        element.style.transform = `perspective(1000px) translateY(${(mobile ? -32 : -80) * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
+        const scale = .8 + .2 * p;
+        element.style.transform = `perspective(1000px) translateY(${-80 * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
     }
     useMotionValueEvent(dashboardPosition, 'change', paintDashboard);
     useMotionValueEvent(scrollY, 'change', value => {
@@ -113,8 +113,6 @@ function LandingMotion({ host, mobileImage, webImage }) {
 
     useEffect(() => {
         document.documentElement.classList.add('react-motion');
-        const resize = () => setMobile(window.innerWidth <= 760);
-        window.addEventListener('resize', resize);
         const header = document.querySelector('header');
         header.classList.toggle('is-scrolled', window.scrollY > 24);
         const actions = document.querySelector('.hero-copy .actions');
@@ -122,14 +120,13 @@ function LandingMotion({ host, mobileImage, webImage }) {
         return () => {
             actionAnimation?.stop();
             actions.style.removeProperty('opacity');
-            window.removeEventListener('resize', resize);
             document.documentElement.classList.remove('react-motion');
         };
     }, [reduced]);
 
     useEffect(() => {
         paintDashboard(dashboardPosition.get());
-    }, [reduced, mobile]);
+    }, [reduced]);
 
     const transition = reduced ? { duration: 0 } : slideSpring;
     return <>

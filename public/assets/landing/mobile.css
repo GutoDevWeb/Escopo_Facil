@@ -6,13 +6,32 @@
     header .header-cta { padding: 12px; }
     header .menu { min-width: 44px; min-height: 44px; }
     .hero-copy { padding: 0 20px; }
+    .hero { height: auto; min-height: 0; padding-top: 184px; padding-bottom: 0; }
+    .hero-copy { margin-bottom: 40px; }
+    .hero > .cloud { top: 84px; width: 240px; height: 92px; }
+    .hero > .cloud.left { left: -100px; }
+    .hero > .cloud.right { right: -100px; }
     .hero h1 { font-size: clamp(32px, 8vw, 46px); line-height: 1.16; }
     .hero-copy p { font-size: 16px; line-height: 1.65; }
-    .dashboard-stage { height: auto; aspect-ratio: 1425 / 1024; margin: 0 16px; }
+    .dashboard-stage { height: auto; aspect-ratio: 1.53143; margin: 0 16px; }
     .workspace { width: 100%; max-width: 100%; left: auto; }
     .actions { flex-wrap: wrap; justify-content: center; gap: 8px; }
     .plans .plan, .plans .plan.featured { min-height: 0; padding: 28px 24px; }
     .plans .plan .button { margin-top: 24px; min-height: 48px; }
+    .feature-row, .feature-copy, .resource-card, .resource-highlights > article, .contact-support-copy { text-align: center; }
+    .feature-copy { align-items: center; }
+    .feature-copy h2, .resources-section > h2, .benefits h2, .pricing h2, .contact-section h2, .contact-support-copy h3 { font-size: clamp(28px, 7.5vw, 36px); line-height: 1.2; }
+    .feature-description, .resource-card p, .contact-description, .contact-support-copy > p { max-width: 540px; margin-left: auto; margin-right: auto; }
+    .feature-copy > .button, .contact-support-copy > .button { align-self: center; }
+    .resource-icon { margin-left: auto; margin-right: auto; }
+    .resource-card { min-height: 0; }
+    .pricing { padding-top: 128px; }
+    .pricing > .cloud.left, .pricing > .cloud.right { top: 16px; width: 260px; height: 100px; }
+    .pricing > .cloud.left { left: -100px; }
+    .pricing > .cloud.right { right: -100px; }
+    .plans .plan > h3, .plans .plan > p { text-align: center; }
+    .plan-name-row { justify-content: center; }
+    .contact-support-copy { display: flex; flex-direction: column; align-items: center; }
     .site-footer-columns { gap: 28px 20px; }
     .site-footer { overflow-wrap: anywhere; }
     .site-footer a, .site-footer [data-app-install] { min-height: 36px; }

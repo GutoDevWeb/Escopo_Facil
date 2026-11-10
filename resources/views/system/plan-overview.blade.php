@@ -1,5 +1,10 @@
 @php($featureAccess = $projectAccess ?? app(\App\Services\PlanAccess::class)->summary(auth()->user()))
-<section class="plan-overview" aria-label="Recursos e limitações do plano">
+<section class="plan-overview {{ ($dismissible ?? false) ? 'plan-overview--dismissible' : '' }}" aria-label="Recursos e limitações do plano">
+    @if($dismissible ?? false)
+    <button type="button" class="plan-overview-dismiss" data-dismiss-plan-overview aria-label="Fechar aviso de recursos deste projeto" title="Fechar aviso até a próxima visita">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    @endif
     <div class="plan-overview-heading"><div><span class="admin-eyebrow">{{ isset($projectAccess) ? 'RECURSOS DESTE PROJETO' : 'SEU PLANO' }}</span><h2>{{ $featureAccess['name'] ?? 'Free' }}</h2></div><span class="plan-overview-note">Projetos ilimitados · acesso por funcionalidades</span></div>
     <div class="plan-feature-grid">
     @foreach([

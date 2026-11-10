@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="system-app"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
 <script src="{{ asset('system/assets/js/theme.js') }}?v={{ filemtime(public_path('system/assets/js/theme.js')) }}"></script>
 @foreach(['global','layout','auth/components','avatar','toast','user-menu'] as $css)
@@ -18,7 +18,7 @@
 <div class="layout">
 <header class="system-mobile-header">
     <button type="button" data-sidebar-toggle aria-controls="system-sidebar" aria-expanded="false" aria-label="Abrir menu"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-    <a href="{{ route('dashboard') }}" aria-label="Escopo Fácil — Dashboard"><img src="{{ asset('icons/icon-192.png') }}" width="32" height="32" alt=""><span>Escopo Fácil</span></a>
+    <a href="{{ route('dashboard') }}" aria-label="Escopo Fácil — Dashboard"><img src="{{ asset('system/assets/icon/logo/Vector (3).svg') }}" width="32" height="32" alt=""><span>Escopo Fácil</span></a>
 </header>
 <div class="sidebar-backdrop" data-sidebar-close hidden></div>
 <aside class="sidebar" id="system-sidebar" aria-label="Menu do sistema">
@@ -106,7 +106,7 @@
 
 @include('system.notifications-panel')
 <script src="{{ asset('system/assets/js/api.js') }}"></script>
-<script src="{{ asset('system/assets/js/notifications.js') }}"></script>
+<script src="{{ asset('system/assets/js/notifications.js') }}?v={{ filemtime(public_path('system/assets/js/notifications.js')) }}"></script>
 @foreach(['toast','avatar','avatar-picker','user-menu'] as $js)
 <script src="{{ asset('system/assets/js/'.$js.'.js') }}"></script>
 @endforeach
@@ -116,5 +116,5 @@
 @if($page === 'dashboard')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.js"></script>
 @endif
-<script src="{{ asset('system/assets/js/integration.js') }}"></script>
+<script src="{{ asset('system/assets/js/integration.js') }}?v={{ filemtime(public_path('system/assets/js/integration.js')) }}"></script>
 </body></html>
