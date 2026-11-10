@@ -80,7 +80,12 @@ class SubscriptionController extends Controller
                 }
             } catch (\Throwable $exception) {
                 $payment->update(['status' => 'failed']);
-                throw ValidationException::withMessages(['payment' => 'Não foi possível gerar o PIX de teste. Confira a configuração do ambiente e tente novamente.']);
+                \Illuminate\Support\Facades\Log::warning('pix_creation_failed', ['payment_id' => $payment->id, 'exception_type' => get_class($exception)]);
+                throw ValidationException::withMessages(['payment' => $exception instanceof \App\Exceptions\PixGatewayException
+                    ? $exception->getMessage()
+                    : ($exception instanceof \Illuminate\Http\Client\ConnectionException
+                        ? 'Não foi possível conectar à AbacatePay. Aguarde e tente novamente.'
+                        : 'Não foi possível gerar o PIX de teste. Confira a configuração do ambiente e tente novamente.')]);
             }
         }
 

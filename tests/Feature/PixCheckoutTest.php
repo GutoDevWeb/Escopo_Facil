@@ -215,4 +215,20 @@ class PixCheckoutTest extends TestCase
         $this->assertDatabaseHas('pix_payments', ['id' => $charge['id'], 'status' => 'pending']);
         $this->assertNull($user->fresh()->plan_id);
     }
+
+    public function test_provider_authentication_and_permission_failures_are_identified_without_exposing_secrets(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        config(['payments.driver' => 'abacate', 'payments.abacate_key' => 'abc_dev_private_test_key']);
+        foreach ([401 => 'recusou a chave', 403 => 'TRANSPARENT:CREATE', 422 => 'recusou os dados', 429 => 'limite de requisições'] as $status => $message) {
+            Http::swap(new \Illuminate\Http\Client\Factory);
+            Http::preventStrayRequests();
+            Http::fake(['*' => Http::response(['error' => 'abc_dev_private_test_key must never be echoed'], $status)]);
+            $this->postJson('/checkout/process', ['plan_id' => $this->plan->id, 'period' => 'monthly'])
+                ->assertUnprocessable()->assertJsonPath('message', fn ($value) => str_contains($value, $message))->assertDontSee('abc_dev_private_test_key');
+        }
+        $this->assertDatabaseCount('subscriptions', 0);
+        $this->assertSame(0, PixPayment::whereNotNull('code')->count());
+    }
 }
