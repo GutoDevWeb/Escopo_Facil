@@ -287,7 +287,7 @@ npm run build
 php artisan serve
 ```
 
-Configure no `.env` a URL usada para acessar o site, por exemplo `APP_URL=http://127.0.0.1:8000`. Esse endereço também participa dos links enviados por e-mail. A chave deve ser gerada no primeiro preparo; não regenere a `APP_KEY` de um ambiente já em uso.
+Configure no `.env` a URL usada para acessar o site: no desenvolvimento, por exemplo, `APP_URL=http://127.0.0.1:8000`; na hospedagem, `APP_URL=https://www.escopofacil.com.br`. Esse endereço também participa dos links enviados por e-mail. A chave deve ser gerada no primeiro preparo; não regenere a `APP_KEY` de um ambiente já em uso.
 
 Para desenvolvimento de frontend, execute `npm run dev` em outro terminal, mantendo o servidor PHP ativo. O script `composer dev` também está disponível e inicia servidor, listener de fila, logs e Vite. Dependendo das ferramentas PHP disponíveis no Windows, prefira os processos separados.
 

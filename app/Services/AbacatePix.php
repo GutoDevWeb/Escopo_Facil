@@ -46,7 +46,7 @@ class AbacatePix
             'data' => [
                 'amount' => $payment->amount,
                 'expiresIn' => config('payments.expires_in'),
-                'description' => 'Escopo Fácil — '.$payment->plan->name,
+                'description' => 'Escopo Fácil - '.str_replace(["\u{2014}", "\u{2013}"], '-', $payment->plan->name),
                 'externalId' => $payment->id,
             ],
         ]));

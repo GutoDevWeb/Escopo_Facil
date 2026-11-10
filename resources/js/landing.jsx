@@ -87,13 +87,16 @@ function SectionReveals() {
 function LandingMotion({ host, mobileImage, webImage }) {
     const reduced = useSiteReducedMotion();
     const [device, setDevice] = useState('mobile');
+    const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 809px)').matches);
     const dashboardRef = useRef(document.querySelector('.dashboard-stage'));
     const deviceRef = useRef(host);
     const { scrollY } = useScroll();
 
     // Start when the top meets the viewport bottom; finish when its bottom does.
     // At 1440 × 900 this reproduces ~.892 scale at y=0 and full scale at y≈380.
-    const { scrollYProgress: dashboardProgress } = useScroll({ target: dashboardRef, offset: ['start end', 'end end'] });
+    // On a phone the whole image may already fit at page load. Keep the
+    // animation range open while it crosses the viewport instead of ending immediately.
+    const { scrollYProgress: dashboardProgress } = useScroll({ target: dashboardRef, offset: compact ? ['start 85%', 'end 15%'] : ['start end', 'end end'] });
     const { scrollYProgress: deviceProgress } = useScroll({ target: deviceRef, offset: ['start end', 'end end'] });
     const dashboardPosition = useSpring(dashboardProgress, dashboardSpring);
     const imagePosition = useSpring(deviceProgress, imageSpring);
@@ -113,6 +116,9 @@ function LandingMotion({ host, mobileImage, webImage }) {
 
     useEffect(() => {
         document.documentElement.classList.add('react-motion');
+        const media = window.matchMedia('(max-width: 809px)');
+        const onResize = () => setCompact(media.matches);
+        media.addEventListener('change', onResize);
         const header = document.querySelector('header');
         header.classList.toggle('is-scrolled', window.scrollY > 24);
         const actions = document.querySelector('.hero-copy .actions');
@@ -121,6 +127,7 @@ function LandingMotion({ host, mobileImage, webImage }) {
             actionAnimation?.stop();
             actions.style.removeProperty('opacity');
             document.documentElement.classList.remove('react-motion');
+            media.removeEventListener('change', onResize);
         };
     }, [reduced]);
 

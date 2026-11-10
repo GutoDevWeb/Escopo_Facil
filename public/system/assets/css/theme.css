@@ -2,6 +2,7 @@
 html.system-app, html.system-app body {
     height: 100%;
     overflow: hidden;
+    background-color: var(--color-background);
 }
 
 /* Os valores claros ficam nos componentes; estes tokens cobrem o sistema inteiro. */

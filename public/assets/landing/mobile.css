@@ -1,4 +1,6 @@
-.site-install { max-width: 1200px; margin: 0 auto 28px; padding: 0 24px; color: var(--wine, #8b0836); }
+.site-install { margin: 0 0 28px; padding: 0; color: var(--wine, #8b0836); }
+.site-install button { display: inline-flex; align-items: center; min-height: 44px; }
+.site-footer-mobile-links, .site-footer-description--mobile { display: none; }
 @media (max-width: 809px) {
     header { max-width: calc(100% - 24px); }
     header .header-account { min-width: 0; gap: 8px; }
@@ -13,8 +15,11 @@
     .hero > .cloud.right { right: -100px; }
     .hero h1 { font-size: clamp(32px, 8vw, 46px); line-height: 1.16; }
     .hero-copy p { font-size: 16px; line-height: 1.65; }
-    .dashboard-stage { height: auto; aspect-ratio: 1.53143; margin: 0 16px; }
-    .workspace { width: 100%; max-width: 100%; left: auto; }
+    .dashboard-stage { height: auto; aspect-ratio: auto; margin: 0 16px; }
+    .workspace { width: 100%; max-width: 100%; height: auto; aspect-ratio: auto; left: auto; }
+    .workspace > img { width: 100%; height: auto; object-fit: contain; }
+    .feature-visual { height: auto; padding: 20px; }
+    .feature-visual img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; }
     .actions { flex-wrap: wrap; justify-content: center; gap: 8px; }
     .plans .plan, .plans .plan.featured { min-height: 0; padding: 28px 24px; }
     .plans .plan .button { margin-top: 24px; min-height: 48px; }
@@ -32,8 +37,24 @@
     .plans .plan > h3, .plans .plan > p { text-align: center; }
     .plan-name-row { justify-content: center; }
     .contact-support-copy { display: flex; flex-direction: column; align-items: center; }
-    .site-footer-columns { gap: 28px 20px; }
-    .site-footer { overflow-wrap: anywhere; }
+    .site-footer { overflow-wrap: anywhere; padding: 40px 20px calc(28px + env(safe-area-inset-bottom)); text-align: center; border-radius: 28px 28px 0 0; }
+    .site-footer-columns { display: none; }
+    .site-install { margin-bottom: 20px; text-align: center; }
+    .site-footer .site-install button { justify-content: center; text-align: center; font-size: 14px; line-height: 1.5; }
+    .site-footer-mobile-links { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 0 0 28px; font-size: 15px; line-height: 24px; }
+    .site-footer-mobile-links a { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px 12px; }
+    .site-footer-mobile-links { gap: 20px; }
+    .site-footer-mobile-group h2 { margin: 0 0 8px; font-size: 17px; line-height: 24px; letter-spacing: 0; }
+    .site-footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 20px; padding-top: 28px; }
+    .site-footer-identity { display: contents; }
+    .site-footer-identity > a { order: 0; }
+    .site-footer .lgpd-badge { order: 1; }
+    .site-footer-identity > p { order: 2; font-size: 13px; }
+    .site-footer-logo { width: 180px; }
+    .site-footer-description--desktop { display: none; }
+    .site-footer-description--mobile { display: block; margin: 20px auto 0; max-width: 360px; font-size: 12px; line-height: 1.7; }
+    .site-footer-credit { font-size: 12px; line-height: 1.7; margin: 12px auto 0; max-width: 340px; }
+    .site-footer .footer-socials { justify-content: center; margin-top: 20px; }
     .site-footer a, .site-footer [data-app-install] { min-height: 36px; }
     .contact-form input, .contact-form textarea, .login-modal input, .login-modal select { font-size: 16px; }
     .login-modal-overlay { padding: 12px; }

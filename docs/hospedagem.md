@@ -1,5 +1,7 @@
 # Hospedagem e e-mail do Escopo Fácil
 
+O endereço oficial da instalação hospedada é **https://www.escopofacil.com.br/**. Use `APP_URL=https://www.escopofacil.com.br` nas variáveis Production da Vercel. Para desenvolvimento local, mantenha a URL do servidor local.
+
 > **Deploy na Vercel:** siga [o roteiro atualizado de produção](deploy-vercel.md), com Container Runtime, PostgreSQL externo e variáveis privadas. As instruções abaixo também documentam a alternativa em servidor PHP convencional; o SQLite persistente citado nelas **não se aplica à Vercel**.
 
 ## Estado do preparo

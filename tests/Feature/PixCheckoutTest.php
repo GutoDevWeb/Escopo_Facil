@@ -127,7 +127,7 @@ class PixCheckoutTest extends TestCase
         $this->assertNull($user->fresh()->plan_id);
         $this->postJson($charge['simulate_url'])->assertOk()->assertJsonPath('status', 'paid');
         $this->assertSame($this->plan->id, $user->fresh()->plan_id);
-        Http::assertSent(fn ($request) => str_ends_with($request->url(), '/transparents/create') && $request['method'] === 'PIX' && $request['data']['amount'] === 2790);
+        Http::assertSent(fn ($request) => str_ends_with($request->url(), '/transparents/create') && $request['method'] === 'PIX' && $request['data']['amount'] === 2790 && $request['data']['description'] === 'Escopo Fácil - Escopo Pro');
     }
 
     public function test_hosted_demo_activates_pro_and_team_only_after_provider_confirmation(): void

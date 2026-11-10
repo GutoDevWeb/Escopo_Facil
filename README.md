@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://escopo-facil.vercel.app/">Acesse o projeto online</a>
+  <a href="https://www.escopofacil.com.br/">Acesse o projeto online</a>
 </p>
 
 ## Sobre o projeto

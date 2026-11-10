@@ -1,5 +1,9 @@
 # Deploy online na Vercel
 
+**Endereço público oficial:** https://www.escopofacil.com.br/.
+
+Na Vercel, configure `APP_URL=https://www.escopofacil.com.br` no ambiente Production e faça um novo deploy. Essa URL é usada nos links gerados por comandos e e-mails. Mantenha `escopofacil.com.br` redirecionando para `www.escopofacil.com.br` nas configurações de Domains. Não altere as credenciais de e-mail ao trocar a URL do site.
+
 O Escopo Fácil usa Laravel e precisa executar PHP. O deploy é feito pelo **Container Runtime**, atualmente em beta na Vercel, com `Dockerfile.vercel` e FrankenPHP. Não use o preset Vite nem `dist` como diretório de saída. O Vite compila somente os assets, dentro do contêiner.
 
 **O projeto continua acadêmico, agora hospedado.** `APP_ENV=production` configura segurança e funcionamento no servidor; não transforma a aplicação em um serviço comercial. Planos e pagamentos continuam demonstrativos, sem movimentação financeira real.
@@ -19,7 +23,7 @@ O Escopo Fácil usa Laravel e precisa executar PHP. O deploy é feito pelo **Con
 1. Criar um PostgreSQL gerenciado, com backups habilitados. Pode usar uma integração do Marketplace da Vercel. Guardar a conexão fornecida pelo provedor, com TLS; preferir a conexão com pooling compatível com sessões/transações PHP. Usar banco separado para Preview e Production.
 2. Criar/acessar a conta Google `escopofacil@gmail.com`, ativar a verificação em duas etapas e gerar uma senha de aplicativo. Essa opção não exige comprar um domínio nem usar o Resend.
 3. Escolher uma caixa que realmente receba contato para `CONTACT_MAIL_TO`. O serviço de envio não cria uma caixa de suporte.
-4. Definir a URL pública final do sistema. Pode ser a URL `vercel.app` inicialmente; mudar depois exige atualizar `APP_URL` e republicar.
+4. Usar a URL pública oficial `https://www.escopofacil.com.br`, vinculada ao projeto na Vercel. Alterar a URL exige atualizar `APP_URL` e republicar.
 
 Nunca enviar senhas ou chaves ao Git. Não reutilizar o banco, o administrador ou as senhas de demonstração locais.
 
@@ -32,7 +36,7 @@ Valores essenciais:
 | Variável | Valor |
 | --- | --- |
 | `APP_ENV` / `APP_DEBUG` | `production` / `false` |
-| `APP_URL` | URL HTTPS final, sem caminho adicional |
+| `APP_URL` | `https://www.escopofacil.com.br` |
 | `APP_KEY` | Chave Laravel gerada uma única vez |
 | `DB_CONNECTION` | `pgsql` |
 | `DB_URL` | URL de conexão privada fornecida pelo banco; alternativamente preencher host/porta/banco/usuário/senha |
