@@ -125,7 +125,7 @@ PIX_DRIVER=abacate
 ABACATEPAY_DEV_KEY=dev_SUA_CHAVE_DE_TESTE
 ```
 
-A chave deve ser criada no modo de desenvolvimento da AbacatePay e mantida como segredo no servidor. O fluxo gera QR Code de teste, permite clicar em **Simular pagamento** e só ativa o plano após o servidor consultar o provedor e receber `PAID`. Não transferir dinheiro. Chaves `prod_` e o simulador local são recusados na hospedagem, mesmo com a opção habilitada. Com `PIX_DEMO_ENABLED=false` (padrão), o checkout hospedado permanece indisponível. Free com avaliação e atribuição de planos pela administração continuam disponíveis.
+A chave deve ser criada no modo de desenvolvimento da AbacatePay e mantida como segredo no servidor. Os formatos `dev_` e `abc_dev_` são aceitos; copie a chave completa, sem alterar o prefixo. O fluxo gera QR Code de teste, permite clicar em **Simular pagamento** e só ativa o plano após o servidor consultar o provedor e receber `PAID`. Não transferir dinheiro. Chaves reais e o simulador local são recusados na hospedagem, mesmo com a opção habilitada. Com `PIX_DEMO_ENABLED=false` (padrão), o checkout hospedado permanece indisponível. Free com avaliação e atribuição de planos pela administração continuam disponíveis.
 
 Os termos e a privacidade mantêm a versão acadêmica `2026-10-22`, a identificação institucional e os avisos de simulação do site. A hospedagem não elimina os cuidados com dados pessoais: os responsáveis devem confirmar os contatos e os prazos de conservação/backups dos serviços contratados.
 

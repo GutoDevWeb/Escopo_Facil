@@ -134,7 +134,7 @@ class PixCheckoutTest extends TestCase
     {
         $this->app->instance('env', 'production');
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
-        config(['payments.production_demo_enabled' => true, 'payments.driver' => 'abacate', 'payments.abacate_key' => 'dev_test']);
+        config(['payments.production_demo_enabled' => true, 'payments.driver' => 'abacate', 'payments.abacate_key' => 'abc_dev_test']);
         Plan::create(['name' => 'Escopo Equipe', 'slug' => 'equipe', 'price_monthly' => 49.90, 'price_yearly' => 499]);
 
         foreach (['pro', 'equipe'] as $slug) {
@@ -189,6 +189,18 @@ class PixCheckoutTest extends TestCase
         $this->postJson('/checkout/process', ['plan_id' => $this->plan->id, 'period' => 'monthly'])->assertUnprocessable();
         $this->assertSame(0, PixPayment::whereNotNull('code')->count());
         $this->assertDatabaseCount('subscriptions', 0);
+    }
+
+    public function test_both_development_key_formats_are_accepted_and_live_formats_are_rejected(): void
+    {
+        foreach (['dev_test', 'abc_dev_test'] as $key) {
+            config(['payments.abacate_key' => $key]);
+            $this->assertTrue(\App\Services\PixDemo::hasDevelopmentKey());
+        }
+        foreach (['prod_test', 'abc_prod_test', 'abc_live_test', 'abc_test', '', 'DEV_test'] as $key) {
+            config(['payments.abacate_key' => $key]);
+            $this->assertFalse(\App\Services\PixDemo::hasDevelopmentKey());
+        }
     }
 
     public function test_gateway_outage_preserves_pending_payment_and_plan(): void

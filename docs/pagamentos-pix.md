@@ -1,5 +1,7 @@
 # PIX acadêmico
 
+**Formatos de chave de teste:** a aplicação aceita `dev_` e `abc_dev_`. Copie a chave completa, sem remover ou alterar o prefixo. O prefixo sozinho não libera uma cobrança: a resposta da criação ainda precisa conter `devMode: true`. Chaves reais continuam bloqueadas.
+
 Os botões “Comprar agora” do Pro e do Equipe abrem o componente de pagamento sobre a landing page, com fundo em blur, sem recarregar a página. Os valores iniciais são R$ 27,90/mês ou R$ 238,80/ano para Pro (equivalente a R$ 19,90/mês no anual), e R$ 49,90/mês ou R$ 499,00/ano para Equipe. O checkout usa os valores do catálogo no servidor. Não há cartão nem renovação automática.
 
 ## Apresentação sem serviço externo (padrão)

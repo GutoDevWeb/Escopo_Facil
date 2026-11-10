@@ -12,8 +12,8 @@ class AbacatePix
     {
         $key = (string) config('payments.abacate_key');
         // Reject production credentials BEFORE making any network request.
-        if (! str_starts_with($key, 'dev_')) {
-            throw new RuntimeException('Configure uma chave de desenvolvimento dev_ no servidor.');
+        if (! PixDemo::hasDevelopmentKey()) {
+            throw new RuntimeException('Configure uma chave de desenvolvimento dev_ ou abc_dev_ no servidor.');
         }
 
         return Http::baseUrl('https://api.abacatepay.com/v2')->withToken($key)
