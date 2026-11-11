@@ -1,5 +1,6 @@
 {
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "framework": "container",
-    "crons": [{ "path": "/internal/maintenance", "schedule": "0 6 * * *" }]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "container",
+  "regions": ["gru1"],
+  "crons": [{ "path": "/internal/maintenance", "schedule": "0 6 * * *" }]
 }
