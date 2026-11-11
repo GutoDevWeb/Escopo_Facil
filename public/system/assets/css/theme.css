@@ -2,13 +2,17 @@
 html[data-theme="dark"] .sugestao-nome { color: #fff; }
 .sugestao-nome { color: var(--color-text-strong, #202534); }
 .projeto-role-status { display: inline-flex; align-items: center; gap: 8px; }
-.project-update-dot { display: inline-block; width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #ef4444; transform-origin: center; animation: project-update-pulse 1.25s ease-in-out infinite; }
+.project-update-dot { position: relative; display: inline-block; width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%; background: #ef4444; transform-origin: center; will-change: transform, opacity; animation: project-update-pulse 1.1s ease-in-out infinite; }
+.project-update-dot::after { content: ''; position: absolute; inset: -4px; border: 2px solid rgb(239 68 68 / 55%); border-radius: 50%; pointer-events: none; animation: project-update-ring 1.1s ease-out infinite; }
 .project-update-dot[hidden], .project-delete-button[hidden] { display: none; }
 @keyframes project-update-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgb(239 68 68 / 0%); }
-    50% { transform: scale(1.55); opacity: .62; box-shadow: 0 0 0 4px rgb(239 68 68 / 16%); }
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.45); opacity: .6; }
 }
-@media (prefers-reduced-motion: reduce) { .project-update-dot { animation: none; } }
+@keyframes project-update-ring {
+    0% { transform: scale(.65); opacity: .8; }
+    100% { transform: scale(1.45); opacity: 0; }
+}
 .project-save-actions, .project-delete-dialog-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 #form-gerenciar-projeto .modal-lateral-actions { gap: 12px; flex-wrap: wrap; }
 .project-save-actions { margin-left: auto; }

@@ -135,6 +135,30 @@ function LandingMotion({ host, mobileImage, webImage }) {
         paintDashboard(dashboardPosition.get());
     }, [reduced, compact]);
 
+    // Keep the hero animation alive on mobile browsers where Motion's target
+    // observer can remain at its initial value while the page is scrolling.
+    useEffect(() => {
+        if (reduced) return undefined;
+        let frame = 0;
+        const updateFromViewport = () => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                const rect = dashboardRef.current?.getBoundingClientRect();
+                if (!rect || !rect.height) return;
+                const progress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / rect.height));
+                paintDashboard(progress);
+            });
+        };
+        updateFromViewport();
+        window.addEventListener('scroll', updateFromViewport, { passive: true });
+        window.addEventListener('resize', updateFromViewport);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', updateFromViewport);
+            window.removeEventListener('resize', updateFromViewport);
+        };
+    }, [reduced, compact]);
+
     const transition = reduced ? { duration: 0 } : slideSpring;
     return <>
         <SectionReveals />
