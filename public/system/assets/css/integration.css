@@ -67,7 +67,7 @@
 .admin-bar-column span, .admin-bar-column small { font-size: 10px; color: var(--theme-muted, #77808d); }
 .admin-users-header { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
 .admin-users-header input { border: 1px solid var(--theme-border, #ddd); padding: 10px; border-radius: 8px; }
-.admin-users-header button { background: #8b0836; color: white; border: 0; padding: 11px 16px; border-radius: 8px; cursor: pointer; }
+.admin-users-header button { background: #8b0836; color: white; border: 0; padding: 11px 16px; border-radius: 8px; cursor: pointer; font-family: var(--font-family); font-weight: 500; }
 .admin-table-scroll { overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .admin-table th { background: var(--theme-inset, #f7f8fa); text-align: left; color: var(--theme-muted, #5c6675); font-weight: 500; }
