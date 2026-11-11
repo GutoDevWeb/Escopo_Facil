@@ -106,6 +106,13 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const element = dashboardRef.current.querySelector('.workspace');
         if (reduced) { element.style.removeProperty('transform'); return; }
         const p = Math.max(0, Math.min(1, value));
+        if (compact) {
+            // Make the mobile motion readable on a small viewport: start
+            // clearly zoomed out and settle slightly above the base scale.
+            const scale = .64 + .44 * p;
+            element.style.transform = `translate3d(0, ${-56 * (1 - p)}px, 0) scale(${scale})`;
+            return;
+        }
         const scale = .8 + .2 * p;
         element.style.transform = `perspective(1000px) translateY(${-80 * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
     }
@@ -143,24 +150,35 @@ function LandingMotion({ host, mobileImage, webImage }) {
     // Keep the hero animation alive on mobile browsers where Motion's target
     // observer can remain at its initial value while the page is scrolling.
     useEffect(() => {
-        if (reduced) return undefined;
+        // Desktop is driven exclusively by Motion. The viewport fallback is
+        // only needed on mobile browsers where the target progress can stall.
+        if (reduced || !compact) return undefined;
         let frame = 0;
+        let stageTop = 0;
+        let stageHeight = 1;
+        const measure = () => {
+            const stage = dashboardRef.current;
+            if (!stage) return;
+            const rect = stage.getBoundingClientRect();
+            stageTop = rect.top + window.scrollY;
+            stageHeight = Math.max(1, rect.height);
+        };
         const updateFromViewport = () => {
             cancelAnimationFrame(frame);
             frame = requestAnimationFrame(() => {
-                const rect = dashboardRef.current?.getBoundingClientRect();
-                if (!rect || !rect.height) return;
-                const progress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / rect.height));
+                const progress = Math.max(0, Math.min(1, (window.innerHeight + window.scrollY - stageTop) / stageHeight));
                 paintDashboard(progress);
             });
         };
+        const onResize = () => { measure(); updateFromViewport(); };
+        measure();
         updateFromViewport();
         window.addEventListener('scroll', updateFromViewport, { passive: true });
-        window.addEventListener('resize', updateFromViewport);
+        window.addEventListener('resize', onResize);
         return () => {
             cancelAnimationFrame(frame);
             window.removeEventListener('scroll', updateFromViewport);
-            window.removeEventListener('resize', updateFromViewport);
+            window.removeEventListener('resize', onResize);
         };
     }, [reduced, compact]);
 
