@@ -27,7 +27,9 @@ class SystemController extends Controller
     public function dashboard(Request $request)
     {
         $projects = Project::visibleTo($request->user())->where('archived', false)->pluck('id');
-        $tasks = Task::whereIn('project_id', $projects)->get();
+        $tasks = Task::whereIn('project_id', $projects)
+            ->select(['id', 'project_id', 'status', 'title', 'updated_at'])
+            ->get();
         $counts = $tasks->countBy('status');
         $tarefasPendentes = $counts['todo'] ?? 0;
         $tarefasFazendo = $counts['doing'] ?? 0;
@@ -48,7 +50,13 @@ class SystemController extends Controller
     public function projects(Request $request)
     {
         $unreadProjects = app(\App\Services\ProjectActivity::class)->unreadProjects($request->user());
-        $projetos = Project::visibleTo($request->user())->with(['owner', 'members'])->latest('id')->get()->map(function ($p) use ($request, $unreadProjects) {
+        $projetos = Project::visibleTo($request->user())
+            ->select(['id', 'user_id', 'title', 'description', 'created_at'])
+            ->with([
+                'owner:id,name,email,job_role,avatar,plan_id,created_at',
+                'members:id,name,email,job_role,avatar',
+            ])
+            ->latest('id')->get()->map(function ($p) use ($request, $unreadProjects) {
             $members = collect([array_replace($this->person($p->owner), ['role' => 'admin', 'role_label' => 'Proprietário'])])->merge($p->members->map(fn ($u) => array_replace($this->person($u), ['role' => $u->pivot->role === 'manager' ? 'admin' : 'membro', 'role_label' => ['manager' => 'Admin', 'viewer' => 'Leitor', 'member' => 'Membro'][$u->pivot->role] ?? 'Membro'])));
             return ['id' => $p->id, 'titulo' => $p->title, 'descricao' => $p->description ?? '',
                 'role' => Gate::allows('update', $p) ? 'admin' : 'membro', 'criado_por' => $p->owner->name,

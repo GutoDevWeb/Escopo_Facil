@@ -2,9 +2,12 @@
 html[data-theme="dark"] .sugestao-nome { color: #fff; }
 .sugestao-nome { color: var(--color-text-strong, #202534); }
 .projeto-role-status { display: inline-flex; align-items: center; gap: 8px; }
-.project-update-dot { display: inline-block; width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #ef4444; animation: project-update-pulse 1.6s ease-in-out infinite; }
+.project-update-dot { display: inline-block; width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #ef4444; transform-origin: center; animation: project-update-pulse 1.25s ease-in-out infinite; }
 .project-update-dot[hidden], .project-delete-button[hidden] { display: none; }
-@keyframes project-update-pulse { 50% { opacity: .45; box-shadow: 0 0 0 4px rgb(239 68 68 / 16%); } }
+@keyframes project-update-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgb(239 68 68 / 0%); }
+    50% { transform: scale(1.55); opacity: .62; box-shadow: 0 0 0 4px rgb(239 68 68 / 16%); }
+}
 @media (prefers-reduced-motion: reduce) { .project-update-dot { animation: none; } }
 .project-save-actions, .project-delete-dialog-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 #form-gerenciar-projeto .modal-lateral-actions { gap: 12px; flex-wrap: wrap; }

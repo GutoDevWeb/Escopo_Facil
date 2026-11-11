@@ -1,7 +1,7 @@
 @extends('layouts.system')
 @section('content')
     <h1 class="headline">{{ $title }}</h1>
-    <div class="max-w-7xl mx-auto p-6 space-y-4">
+    <div class="workspace-data max-w-7xl mx-auto p-6 space-y-4">
         <a class="underline" href="{{ route('projects.show', $project) }}">← Voltar ao projeto</a>
         <section class="admin-panel">
             @if(array_key_exists('total', $data))

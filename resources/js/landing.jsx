@@ -23,7 +23,7 @@ function ScrollClouds({ selector, offset }) {
         // Each cloud exits through its own edge and retraces its path on scroll up.
         // Percentages keep the travel proportional to its responsive image size.
         const progress = reduced ? 0 : Math.max(0, Math.min(1, value / .75));
-        const travel = window.matchMedia('(max-width: 809px)').matches ? 45 : 110;
+        const travel = 110;
         section.current.querySelectorAll(':scope > .cloud').forEach(cloud => {
             const direction = cloud.classList.contains('left') ? -1 : 1;
             cloud.style.transform = `translate3d(${direction * progress * travel}%, ${-16 * progress}px, 0)`;
@@ -96,7 +96,7 @@ function LandingMotion({ host, mobileImage, webImage }) {
     // At 1440 × 900 this reproduces ~.892 scale at y=0 and full scale at y≈380.
     // On a phone the whole image may already fit at page load. Keep the
     // animation range open while it crosses the viewport instead of ending immediately.
-    const { scrollYProgress: dashboardProgress } = useScroll({ target: dashboardRef, offset: compact ? ['start 85%', 'end 15%'] : ['start end', 'end end'] });
+    const { scrollYProgress: dashboardProgress } = useScroll({ target: dashboardRef, offset: ['start end', 'end end'] });
     const { scrollYProgress: deviceProgress } = useScroll({ target: deviceRef, offset: ['start end', 'end end'] });
     const dashboardPosition = useSpring(dashboardProgress, dashboardSpring);
     const imagePosition = useSpring(deviceProgress, imageSpring);
@@ -106,10 +106,6 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const element = dashboardRef.current.querySelector('.workspace');
         if (reduced) { element.style.removeProperty('transform'); return; }
         const p = Math.max(0, Math.min(1, value));
-        if (compact) {
-            element.style.transform = `scale(${.92 + .08 * p})`;
-            return;
-        }
         const scale = .8 + .2 * p;
         element.style.transform = `perspective(1000px) translateY(${-80 * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
     }

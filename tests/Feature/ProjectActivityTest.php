@@ -158,10 +158,13 @@ class ProjectActivityTest extends TestCase
         $this->assertSame(1, $owner->notifications()->count());
         $this->assertSame($today->id, $member->notifications()->first()->data['task_id']);
         $this->travel(2)->seconds(); // Tomorrow is now within the 24-hour window.
+        // Deadline notifications are processed by the scheduled command, not by
+        // the request that opens the notification panel.
         $this->actingAs($member)->getJson('/notifications')->assertOk();
-        $this->assertSame(2, $member->notifications()->count());
+        $this->assertSame(1, $member->notifications()->count());
         $this->assertSame(1, $owner->notifications()->count()); // Browser check is scoped to the current user.
         $this->artisan('notifications:deliver')->assertSuccessful();
+        $this->assertSame(2, $member->notifications()->count());
         $this->assertSame(2, $owner->notifications()->count());
         $this->assertSame(2, $member->notifications()->count());
         $tomorrow->update(['due_date' => '2026-11-12']);

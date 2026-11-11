@@ -8,6 +8,7 @@
     header .header-cta { padding: 12px; }
     header .menu { min-width: 44px; min-height: 44px; }
     .hero-copy { padding: 0 20px; }
+    .hero-wrap { background: linear-gradient(180deg, transparent 0%, transparent 86%, #fff 100%); }
     .hero { height: auto; min-height: 0; padding-top: 184px; padding-bottom: 0; }
     .hero-copy { margin-bottom: 72px; }
     .hero > .cloud { top: 84px; width: 240px; height: 92px; }
@@ -18,7 +19,7 @@
     .dashboard-stage { height: auto; aspect-ratio: auto; margin: 0 16px; }
     .workspace { width: 100%; max-width: 100%; height: auto; aspect-ratio: auto; left: auto; }
     .workspace > img { width: 100%; height: auto; object-fit: contain; }
-    .workspace { transform-origin: center top; }
+    .workspace { transform-origin: center top; border-radius: 14px 14px 0 0; }
     .feature-visual { height: auto; padding: 20px; }
     .feature-visual img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; }
     .feature-visual picture { display: block; }

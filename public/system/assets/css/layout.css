@@ -20,6 +20,9 @@
     color: var(--color-text-strong);
 }
 
+.workspace-data { padding-top: 18px; }
+.workspace-data > .underline { display: inline-block; margin-bottom: 24px; }
+
 .header-actions, .member-profile {
     display: flex;
     align-items: center;
