@@ -25,7 +25,7 @@
     <button class="sidebar-mobile-close" type="button" data-sidebar-close aria-label="Fechar menu">×</button>
     <div class="sidebar-logo">
         <img class="sidebar-logo-light" src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil" width="185" height="54">
-        <img class="sidebar-logo-dark" src="{{ asset('system/assets/images/logo-dark.png') }}" alt="Escopo Fácil" width="504" height="161">
+        <img class="sidebar-logo-dark" src="{{ asset('system/assets/images/logoV2.png') }}" alt="Escopo Fácil" width="504" height="161">
     </div>
 
     <nav class="sidebar-nav">

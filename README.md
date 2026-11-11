@@ -1,12 +1,12 @@
 ﻿# Escopo Fácil
 
 <p align="center">
-  <img src="public/system/assets/images/Logo.png" alt="Logo do Escopo Fácil" width="280">
+  <img src="public/system/assets/images/LogoV2.png" alt="Logo do Escopo Fácil" width="280">
 </p>
 
 <p align="center"><strong>Organize projetos, acompanhe tarefas e mantenha sua equipe alinhada.</strong></p>
 
-<p align="center"><a href="https://www.escopofacil.com.br/">Acessar o projeto online</a></p>
+<p align="center"><a href="https://www.escopofacil.com.br/">https://www.escopofacil.com.br</a></p>
 
 ## Sobre o projeto
 
@@ -40,55 +40,6 @@ A aplicação combina uma landing page responsiva, autenticação de usuários, 
 | Pagamentos | AbacatePay em modo de desenvolvimento e PIX local simulado |
 | Qualidade | PHPUnit, testes JavaScript, Laravel Pint e GitHub Actions |
 | Deploy | Docker, Vercel e Neon |
-
-## Como executar localmente
-
-### Requisitos
-
-- PHP 8.2 ou superior;
-- Composer;
-- Node.js 20.19+ ou 22.12+ e npm;
-- SQLite habilitado no PHP para o ambiente local.
-
-### Instalação
-
-```bash
-composer install
-copy .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-npm ci
-npm run build
-php artisan serve
-```
-
-No PowerShell, o comando para copiar o ambiente pode ser:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Para desenvolver o frontend com atualização automática, execute `npm run dev` em outro terminal. O comando `composer dev` inicia os processos de desenvolvimento previstos pelo projeto.
-
-Configure no `.env` pelo menos `APP_URL`, banco de dados e SMTP. Nunca versione `.env`, chaves de API, senhas ou credenciais de serviços.
-
-## Testes e manutenção
-
-```bash
-php artisan test
-npm run build
-```
-
-Alguns comandos úteis para desenvolvimento local:
-
-```bash
-php artisan migrate:fresh --seed
-php artisan route:list
-php artisan schedule:work
-php artisan config:clear
-```
-
-Os comandos de criação de administrador, planos de demonstração e testes de e-mail devem ser executados somente em ambiente local ou de teste. Consulte a documentação antes de rodá-los em produção.
 
 ## Estrutura do projeto
 
@@ -124,4 +75,4 @@ O projeto ainda possui limites próprios de uma demonstração acadêmica: pagam
 
 ---
 
-<p align="center"><em>Feito com amor e muitas iterações.</em></p>
+<p align="center"><em>Feito com amor e muitas iterações. ❤️</em></p>

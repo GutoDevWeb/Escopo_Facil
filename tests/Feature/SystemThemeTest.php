@@ -23,7 +23,7 @@ class SystemThemeTest extends TestCase
             $response = $this->actingAs($user)->get($path)->assertOk();
             $response->assertSee('data-theme-toggle', false)->assertSee('role="switch"', false)
                 ->assertSee('Modo escuro')->assertSee('/system/assets/css/theme.css', false)->assertSee('/system/assets/js/theme.js', false)
-                ->assertSee('/system/assets/images/logo-dark.png', false);
+                ->assertSee('/system/assets/images/logoV2.png', false);
             $this->assertLessThan(strpos($response->getContent(), '/system/assets/css/global.css'), strpos($response->getContent(), '/system/assets/js/theme.js'));
         }
     }
