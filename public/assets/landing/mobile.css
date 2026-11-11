@@ -17,8 +17,10 @@
     .hero h1 { font-size: clamp(32px, 8vw, 46px); line-height: 1.16; }
     .hero-copy p { font-size: 16px; line-height: 1.65; }
     .dashboard-stage { height: auto; aspect-ratio: auto; margin: 0 16px; }
-    .workspace { width: 100%; max-width: 100%; height: auto; aspect-ratio: auto; left: auto; }
-    .workspace > img { width: 100%; height: auto; object-fit: contain; }
+    /* Keep the mobile hero crop identical to desktop while preserving the
+       scroll-driven zoom range. */
+    .workspace { width: 100%; max-width: 100%; height: auto; aspect-ratio: 1.53143; left: auto; }
+    .workspace > img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
     .workspace { transform-origin: center top; border-radius: 14px 14px 0 0; }
     .feature-visual { height: auto; padding: 20px; }
     .feature-visual img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; }

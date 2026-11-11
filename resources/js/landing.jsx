@@ -109,7 +109,12 @@ function LandingMotion({ host, mobileImage, webImage }) {
         const scale = .8 + .2 * p;
         element.style.transform = `perspective(1000px) translateY(${-80 * (1 - p)}px) scale(${scale}) rotateX(${20 * (1 - p)}deg)`;
     }
-    useMotionValueEvent(dashboardPosition, 'change', paintDashboard);
+    // Motion drives the desktop animation. On compact screens the native
+    // scroll fallback below is the single transform writer, avoiding two
+    // competing updates that can make the image stutter.
+    useMotionValueEvent(dashboardPosition, 'change', value => {
+        if (!compact) paintDashboard(value);
+    });
     useMotionValueEvent(scrollY, 'change', value => {
         document.querySelector('header').classList.toggle('is-scrolled', value > 24);
     });
