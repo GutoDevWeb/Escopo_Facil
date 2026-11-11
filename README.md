@@ -1,7 +1,7 @@
 ﻿# Escopo Fácil
 
 <p align="center">
-  <img src="public/system/assets/images/LogoV2.png" alt="Logo do Escopo Fácil" width="280">
+  <img src="public/system/assets/images/logoV2.png" alt="Logo do Escopo Fácil" width="280">
 </p>
 
 <p align="center"><strong>Organize projetos, acompanhe tarefas e mantenha sua equipe alinhada.</strong></p>
