@@ -75,4 +75,4 @@ O projeto ainda possui limites próprios de uma demonstração acadêmica: pagam
 
 ---
 
-<p align="center"><em>Feito com amor e muitas iterações. ❤️</em></p>
+<p align="center"><em>Feito com amor, café e muitas iterações. ❤️</em></p>
