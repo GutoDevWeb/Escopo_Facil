@@ -75,6 +75,22 @@
     overflow-y: auto;
 }
 
+.sidebar-desktop-compact { position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--color-text-strong); cursor: pointer; }
+.sidebar-desktop-compact svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.sidebar-desktop-compact:hover, .sidebar-desktop-compact:focus-visible { background: var(--theme-inset, #f8f2f5); }
+html.sidebar-compact .sidebar { width: 88px; padding-left: 12px; padding-right: 12px; }
+html.sidebar-compact .sidebar-desktop-compact { top: 10px; left: 50%; right: auto; transform: translateX(-50%); }
+html.sidebar-compact .sidebar-logo { width: 48px; height: 48px; margin: 42px 0 28px 4px; overflow: hidden; }
+html.sidebar-compact .sidebar-logo { width: 48px; height: 48px; margin-left: 4px; overflow: hidden; background: center / 42px 42px no-repeat url('/system/assets/icon/logo/Vector%20(3).svg'); }
+html.sidebar-compact .sidebar-logo .sidebar-logo-light { display: none !important; }
+html[data-theme="dark"].sidebar-compact .sidebar-logo .sidebar-logo-dark { display: none !important; }
+html[data-theme="dark"].sidebar-compact .sidebar-logo { background: center / 42px 42px no-repeat url('/system/assets/images/logo-mark-dark.png'); }
+html.sidebar-compact .sidebar-desktop-compact svg { transform: rotate(180deg); }
+html.sidebar-compact .sidebar-link { justify-content: center; gap: 0; padding-left: 0; padding-right: 0; font-size: 0; }
+html.sidebar-compact .sidebar-link img { flex: 0 0 var(--icon-size); }
+html.sidebar-compact .sidebar-banner, html.sidebar-compact .sidebar-plan { display: none; }
+html.sidebar-compact .sidebar-logout { align-items: center; }
+
 .sidebar-logo {
     flex-shrink: 0;
     width: var(--logo-width);

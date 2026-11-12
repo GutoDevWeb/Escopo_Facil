@@ -118,8 +118,13 @@ html[data-theme="dark"] .theme-switch-moon { opacity: 0; transform: rotate(45deg
 .system-theme-switch:focus-visible { outline: 2px solid var(--theme-accent, #8b0836); outline-offset: 4px; }
 .system-theme-switch:hover { border-color: var(--theme-accent, #8b0836); }
 .sidebar-logout .system-theme-switch { width: 88px; }
+html.sidebar-compact .sidebar-logout .system-theme-switch { width: 44px; height: 88px; margin-left: auto; margin-right: auto; }
+html.sidebar-compact .sidebar-logout .theme-switch-thumb { width: 32px; height: 32px; left: 5px; top: 5px; transform: translateX(0); transition: transform .45s cubic-bezier(.22,.8,.22,1), background-color .35s ease; }
+html[data-theme="dark"].sidebar-compact .sidebar-logout .theme-switch-thumb { transform: translateY(44px); }
+html.sidebar-compact .sidebar-logout .theme-switch-sun { top: 11px; left: 11px; }
+html.sidebar-compact .sidebar-logout .theme-switch-moon { top: auto; right: auto; bottom: 11px; left: 11px; }
 /* A logo clara tem margem transparente à direita; iguala a largura visível. */
-.sidebar-logo .sidebar-logo-dark { display: none; width: 88.65%; object-position: left center; }
+.sidebar-logo .sidebar-logo-dark { display: none; width: 100%; object-position: left center; }
 html[data-theme="dark"] .sidebar-logo .sidebar-logo-light { display: none; }
 html[data-theme="dark"] .sidebar-logo .sidebar-logo-dark { display: block; }
 html[data-theme="dark"] .sidebar-link:not(.active) > img { filter: brightness(0) invert(.8); }

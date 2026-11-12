@@ -2,6 +2,11 @@
 <html lang="pt-BR" class="system-app"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="csrf-token" content="{{ csrf_token() }}"><title>Escopo Fácil</title>
+<script>
+    try {
+        if (window.matchMedia('(min-width: 901px)').matches && window.localStorage.getItem('escopo-sidebar-compact') === '1') document.documentElement.classList.add('sidebar-compact');
+    } catch (_) {}
+</script>
 <script src="{{ asset('system/assets/js/theme.js') }}?v={{ filemtime(public_path('system/assets/js/theme.js')) }}"></script>
 @foreach(['global','layout','auth/components','avatar','toast','user-menu'] as $css)
 <link rel="stylesheet" href="{{ asset('system/assets/css/'.$css.'.css') }}">
@@ -22,6 +27,7 @@
 </header>
 <div class="sidebar-backdrop" data-sidebar-close hidden></div>
 <aside class="sidebar" id="system-sidebar" aria-label="Menu do sistema">
+    <button class="sidebar-desktop-compact" type="button" data-sidebar-compact aria-pressed="false" aria-label="Reduzir menu" title="Reduzir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
     <button class="sidebar-mobile-close" type="button" data-sidebar-close aria-label="Fechar menu">×</button>
     <div class="sidebar-logo">
         <img class="sidebar-logo-light" src="{{ url('/system') }}/assets/images/Logo.png" alt="Escopo Fácil" width="185" height="54">

@@ -1,4 +1,7 @@
 .system-mobile-header, .sidebar-mobile-close { display: none; }
+@media (max-width: 900px) {
+    .sidebar-desktop-compact { display: none; }
+}
 @media (max-width: 1200px) {
     .projetos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .main { min-width: 0; }
@@ -52,6 +55,11 @@
     .kanban { flex: none; flex-direction: row; width: 100%; height: auto; min-height: 400px; overflow-x: auto; align-items: stretch; gap: 14px; padding-bottom: 16px; scroll-snap-type: x proximity; }
     .kanban-column { flex: 0 0 min(82vw, 340px); width: auto; min-width: 0; max-height: 65dvh; margin-bottom: 0; scroll-snap-align: start; }
     .modal, .card-detail, .modal-lateral { width: min(100%, 560px); max-width: 100%; max-height: calc(100dvh - 24px); overflow-y: auto; }
+    .modal-lateral-membros-grid { grid-template-columns: minmax(0, 1fr); }
+    .membro-card { height: auto; min-height: 150px; }
+    .membro-card-info { min-width: 0; align-items: flex-start; }
+    .membro-card-texts { min-width: 0; overflow-wrap: anywhere; }
+    .membro-card-nome, .membro-card-email { white-space: normal; overflow-wrap: anywhere; }
     .modal-overlay, .card-detail-overlay { padding: 12px; }
     .card-detail-content { flex-direction: column; padding: 24px 16px; overflow: visible; flex: none; }
     .card-detail-main, .card-detail-sidebar { width: 100%; min-width: 0; flex: none; overflow: visible; }
