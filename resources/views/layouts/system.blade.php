@@ -37,13 +37,13 @@
     <nav class="sidebar-nav">
         @if(auth()->user()->is_admin)
         <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ $page === 'admin' ? 'active' : '' }}">
-            <img src="{{ asset('system/assets/icon/dashboard.svg') }}" alt=""> Administração
+            <img src="{{ asset('system/assets/icon/crown.svg') }}" alt=""> Administração
         </a>
         @endif
         <a href="{{ route('dashboard') }}" class="sidebar-link {{ $page === 'dashboard' ? 'active' : '' }}">
             <img src="{{ url('/system') }}/assets/icon/dashboard.svg" alt=""> Dashboard
         </a>
-        <a href="{{ route('projects.index') }}" class="sidebar-link {{ $page === 'projetos' || $page === 'tarefas' ? 'active' : '' }}">
+        <a href="{{ route('projects.index') }}" class="sidebar-link sidebar-link-projects {{ $page === 'projetos' || $page === 'tarefas' ? 'active' : '' }}">
             <img src="{{ url('/system') }}/assets/icon/folder-search.svg" alt=""> Projetos
         </a>
         <a href="{{ route('profile.edit') }}" class="sidebar-link {{ $page === 'configuracao' ? 'active' : '' }}">
